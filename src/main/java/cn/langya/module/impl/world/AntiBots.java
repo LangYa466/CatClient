@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AntiBots extends Module {
-	public static ModeValue mode = new ModeValue("AntiBot", "Mode", "Basic", "Basic", "Advanced", "Hypixel", "BrokenID", "Invisible", "Enclose");
+	public static ModeValue mode = new ModeValue("Mode", "Hypixel", "Basic", "Advanced", "Hypixel", "BrokenID", "Invisible", "Enclose");
 	private final HashMap<String, Integer> TabTicks = new HashMap<>();
 	private final HashMap<Integer, Integer> InvisTicks = new HashMap<>();
 	private final List<Integer> Grounded = new ArrayList<>();
