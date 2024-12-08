@@ -42,8 +42,8 @@ public class AntiVoid extends Module {
 
       //  if (longJump.isEnabled()) disabledForLongJump = true;
         Scaffold scaffold = (Scaffold) Client.getInstance().getModuleManager().getModule("Scaffold");
-        if (scaffold.isEnable() || disabledForLongJump) {
-            blink.setEnable(false);
+        if (scaffold.isEnabled() || disabledForLongJump) {
+            blink.setEnabled(false);
             return;
         }
 
@@ -59,12 +59,12 @@ public class AntiVoid extends Module {
             if (!setBack) {
                 wasVoid = true;
 
-                blink.setEnable(true);
+                blink.setEnabled(true);
 
                 if (mc.thePlayer.fallDistance > distance.getValue() || setBack) {
                     PacketUtil.sendPacketNoEvent(new C03PacketPlayer.C04PacketPlayerPosition(position.xCoord, position.yCoord - 0.1 - Math.random(), position.zCoord, false));
                     if (this.toggleScaffold.getValue()) {
-                        scaffold.setEnable(true);
+                        scaffold.setEnabled(true);
                     }
 
                     blink.blinkedPackets.clear();
@@ -74,13 +74,13 @@ public class AntiVoid extends Module {
                     setBack = true;
                 }
             } else {
-                blink.setEnable(false);
+                blink.setEnabled(false);
             }
         } else {
             setBack = false;
 
             if (wasVoid) {
-                blink.setEnable(false);
+                blink.setEnabled(false);
                 wasVoid = false;
             }
 

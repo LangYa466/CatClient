@@ -10,6 +10,7 @@ import cn.langya.utils.ChatUtil;
 import cn.langya.utils.HypixelUtil;
 import cn.langya.utils.MoveUtil;
 import cn.langya.value.impl.ModeValue;
+import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 
 /**
@@ -58,14 +59,23 @@ public class Disabler extends Module {
     @EventTarget
     public void onReceivePacket(EventPacket event) {
         if (canRun) return;
-        if (event.getPacket() instanceof S08PacketPlayerPosLook && !isFinished) {
-            flagged++;
-            if (this.flagged == 20) {
-                isFinished = true;
-                flagged = 0;
-                ChatUtil.log("WatchDog Motion is disable.");
-                isFinished = true;
-                canRun = false;
+        if (!event.isSend()) {
+            if (event.getPacket() instanceof S08PacketPlayerPosLook && !isFinished) {
+                flagged++;
+                if (this.flagged == 20) {
+                    isFinished = true;
+                    flagged = 0;
+                    ChatUtil.log("WatchDog Motion is disabled.");
+                    isFinished = true;
+                    canRun = false;
+                }
+            }
+        } else {
+            if (event.getPacket() instanceof C03PacketPlayer) {
+                C03PacketPlayer c03PacketPlayer = (C03PacketPlayer) event.getPacket();
+                if (!c03PacketPlayer.isMoving() && !c03PacketPlayer.getRotating() && mc.thePlayer.onGround) {
+                    event.setCancelled(true);
+                }
             }
         }
     }

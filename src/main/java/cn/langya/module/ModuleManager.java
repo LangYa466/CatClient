@@ -39,7 +39,7 @@ public class ModuleManager {
          */
         // chatgpt
         return moduleMap.values().stream()
-                .filter(Module::isEnable)
+                .filter(Module::isEnabled)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 

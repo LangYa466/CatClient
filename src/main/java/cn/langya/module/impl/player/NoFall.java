@@ -56,7 +56,7 @@ public class NoFall extends Module {
 
     @Override
     public void onDisable() {
-        blink.setEnable(false);
+        blink.setEnabled(false);
         blinked = false;
     }
 
@@ -71,18 +71,18 @@ public class NoFall extends Module {
             case "WatchdogBlink": {
                 if (mc.thePlayer.onGround) {
                     if (blinked) {
-                        blink.setEnable(false);
+                        blink.setEnabled(false);
                         blinked = false;
                     }
                     this.prevOnGround = mc.thePlayer.onGround;
                 } else if (this.prevOnGround) {
                     if (shouldBlink()) {
-                        blink.setEnable(true);
+                        blink.setEnabled(true);
                         blinked = true;
                     }
 
                     prevOnGround = false;
-                } else if (BlockUtil.isBlockUnder() && blink.isEnable() && (this.fallDistance - mc.thePlayer.motionY) >= minFallDistance.getValue()) {
+                } else if (BlockUtil.isBlockUnder() && blink.isEnabled() && (this.fallDistance - mc.thePlayer.motionY) >= minFallDistance.getValue()) {
                     mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer(true));
                     this.fallDistance = 0.0F;
                 }
@@ -106,7 +106,7 @@ public class NoFall extends Module {
                     }
                 }
 
-                if (fallDistance >= minFallDistance.getValue() && !(notWhileKillAura.getValue() && KillAura.target != null) && !Client.getInstance().getModuleManager().getModule("Scaffold").isEnable()) {
+                if (fallDistance >= minFallDistance.getValue() && !(notWhileKillAura.getValue() && KillAura.target != null) && !Client.getInstance().getModuleManager().getModule("Scaffold").isEnabled()) {
                     switch (packetMode.getValue()) {
                         case "Extra":
                             mc.timer.timerSpeed = (float) 0.5;
@@ -127,6 +127,6 @@ public class NoFall extends Module {
     }
 
     private boolean shouldBlink() {
-        return !mc.thePlayer.onGround && !BlockUtil.isBlockUnder((int) Math.floor(minFallDistance.getValue())) && BlockUtil.isBlockUnder() && !Client.getInstance().getModuleManager().getModule("Scaffold").isEnable();
+        return !mc.thePlayer.onGround && !BlockUtil.isBlockUnder((int) Math.floor(minFallDistance.getValue())) && BlockUtil.isBlockUnder() && !Client.getInstance().getModuleManager().getModule("Scaffold").isEnabled();
     }
 }

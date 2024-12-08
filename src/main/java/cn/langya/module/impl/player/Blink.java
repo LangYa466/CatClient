@@ -83,7 +83,7 @@ public class Blink extends Module {
     public void onSendPacket(EventPacket e) {
         if (!e.isSend()) return;
         if (mc.thePlayer == null) {
-            this.setEnable(false);
+            this.setEnabled(false);
             return;
         }
         Packet<?> packet = e.getPacket();

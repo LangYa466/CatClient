@@ -22,7 +22,7 @@ public class Module implements Wrapper {
     private final Category category;
     private String suffix = "";
     // private final String description;
-    private boolean enable;
+    private boolean enabled;
     private List<Value<?>> values;
     private int keyCode = 114514;
 
@@ -32,11 +32,11 @@ public class Module implements Wrapper {
         this.values = new ArrayList<>();
     }
 
-    public void setEnable(boolean enable) {
+    public void setEnabled(boolean enabled) {
         // 赋值需要.this
-        this.enable = enable;
+        this.enabled = enabled;
         // 获取值不需要.this
-        if (enable) {
+        if (enabled) {
             onEnable();
             ChatUtil.info(this.name + EnumChatFormatting.GREEN + " Enabled.");
         } else {
@@ -44,16 +44,16 @@ public class Module implements Wrapper {
             ChatUtil.info(this.name + EnumChatFormatting.RED + " Disable.");
         }
 
-        Client.getInstance().getEventManager().registerModule(enable,this);
+        Client.getInstance().getEventManager().registerModule(enabled,this);
 
 
-        if (mc.thePlayer != null) mc.theWorld.playSound(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, "random.click", 0.5F, enable ? 0.6F : 0.5F, false);
+        if (mc.thePlayer != null) mc.theWorld.playSound(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, "random.click", 0.5F, enabled ? 0.6F : 0.5F, false);
     }
 
     public void onEnable() { }
     public void onDisable() { }
 
     public void toggle() {
-        setEnable(!isEnable());
+        setEnabled(!isEnabled());
     }
 }

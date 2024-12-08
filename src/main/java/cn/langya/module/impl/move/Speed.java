@@ -24,7 +24,7 @@ public class Speed extends Module {
 
     public boolean noLowHop() {
         if (!Disabler.isDisabled()) return true;
-        if (Client.getInstance().getModuleManager().getModule("Scaffold").isEnable()) return true;
+        if (Client.getInstance().getModuleManager().getModule("Scaffold").isEnabled()) return true;
         return stopOnHurtValue.getValue() && mc.thePlayer.hurtTime > 0;
     }
 

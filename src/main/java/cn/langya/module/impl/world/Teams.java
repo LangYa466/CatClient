@@ -21,7 +21,7 @@ public class Teams extends Module {
         if (entity instanceof EntityPlayer) {
             EntityPlayer entityPlayer = (EntityPlayer) entity;
             if (entityPlayer == mc.thePlayer) return false;
-            return Client.getInstance().getModuleManager().getModule("Teams").isEnable() && ((armor.getValue() && PlayerUtil.armorTeam(entityPlayer))
+            return Client.getInstance().getModuleManager().getModule("Teams").isEnabled() && ((armor.getValue() && PlayerUtil.armorTeam(entityPlayer))
                     || (color.getValue() && PlayerUtil.colorTeam(entityPlayer))
                     || (scoreboard.getValue() && PlayerUtil.scoreTeam(entityPlayer)));
         }

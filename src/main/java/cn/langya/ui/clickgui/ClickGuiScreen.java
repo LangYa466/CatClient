@@ -67,7 +67,7 @@ public class ClickGuiScreen extends GuiScreen {
         }
         offset = 0;
         for (Module m : Client.getInstance().getModuleManager().getModulesWithCategory(selectedCategory)) {
-            Gui.drawRect(posX + 65,posY + 1 + offset,posX + 160,posY + 15 + offset,m.isEnable() ? new Color(0, 140, 255).getRGB() : new Color(28,28,28).getRGB());
+            Gui.drawRect(posX + 65,posY + 1 + offset,posX + 160,posY + 15 + offset,m.isEnabled() ? new Color(0, 140, 255).getRGB() : new Color(28,28,28).getRGB());
             fr.drawString(m.getName(),(int)posX + 67, (int)(posY + 5) + offset, -1);
             offset += 15;
         }

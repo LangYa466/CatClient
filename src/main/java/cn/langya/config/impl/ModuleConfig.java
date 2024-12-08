@@ -24,7 +24,7 @@ public class ModuleConfig extends Config {
         JsonObject object = new JsonObject();
         for (Module module : Client.getInstance().getModuleManager().getModuleMap().values()) {
             JsonObject moduleObject = new JsonObject();
-            moduleObject.addProperty("enable", module.isEnable());
+            moduleObject.addProperty("enable", module.isEnabled());
             moduleObject.addProperty("key", module.getKeyCode());
             JsonObject valuesObject = getValueJsonObject(module);
             moduleObject.add("values", valuesObject);
@@ -51,7 +51,7 @@ public class ModuleConfig extends Config {
         for (Module module : Client.getInstance().getModuleManager().getModuleMap().values()) {
             if (object.has(module.getName())) {
                 JsonObject moduleObject = object.get(module.getName()).getAsJsonObject();
-                if (moduleObject.has("enable")) module.setEnable(moduleObject.get("enable").getAsBoolean());
+                if (moduleObject.has("enable")) module.setEnabled(moduleObject.get("enable").getAsBoolean());
                 if (moduleObject.has("key")) module.setKeyCode(moduleObject.get("key").getAsInt());
                 if (!moduleObject.has("values")) continue;
                 JsonObject valuesObject = moduleObject.get("values").getAsJsonObject();

@@ -139,7 +139,7 @@ public class ChestStealer extends Module {
     }
 
     public static boolean canSteal() {
-        if (Client.getInstance().getModuleManager().getModule("ChestStealer").isEnable() && mc.currentScreen instanceof GuiChest) {
+        if (Client.getInstance().getModuleManager().getModule("ChestStealer").isEnabled() && mc.currentScreen instanceof GuiChest) {
             ContainerChest chest = (ContainerChest) mc.thePlayer.openContainer;
             IInventory chestInv = chest.getLowerChestInventory();
             return !titleCheck.getValue() || (chestInv instanceof ContainerLocalMenu && ((ContainerLocalMenu) chestInv).realChest);
