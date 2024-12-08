@@ -16,13 +16,13 @@ import net.minecraft.network.play.server.S14PacketEntity;
 import net.minecraft.network.play.server.S19PacketEntityStatus;
 import net.minecraft.util.EnumChatFormatting;
 
-public class GrimAC extends Module {
+public class HackerDetector extends Module {
     public BooleanValue reachValue = new BooleanValue("Reach", true);
     public BooleanValue noslowAValue = new BooleanValue("NoSlowA", true);
     public static final DecimalFormat DF_1 = new DecimalFormat("0.000000");
     int vl;
 
-    public GrimAC() {
+    public HackerDetector() {
         super(Category.World);
     }
 
@@ -38,6 +38,7 @@ public class GrimAC extends Module {
 
     @EventTarget
     public void onPacket(EventPacket event) {
+        if (mc.thePlayer == null) return;
         if (!event.isRev()) return;
         if (mc.thePlayer.ticksExisted % 6 == 0) {
             S19PacketEntityStatus s19;
@@ -70,7 +71,7 @@ public class GrimAC extends Module {
             return;
         }
         double reach = attacker.getDistanceToEntity(entity);
-        String prefix = EnumChatFormatting.GRAY + "[" + EnumChatFormatting.AQUA + "GrimAC" + EnumChatFormatting.GRAY + "] " + EnumChatFormatting.RESET + EnumChatFormatting.GRAY + attacker.getName() + EnumChatFormatting.WHITE + " failed ";
+        String prefix = EnumChatFormatting.GRAY + "[" + EnumChatFormatting.AQUA + "HackerDetector" + EnumChatFormatting.GRAY + "] " + EnumChatFormatting.RESET + EnumChatFormatting.GRAY + attacker.getName() + EnumChatFormatting.WHITE + " failed ";
         if (reach > 3.0) {
             ChatUtil.log(prefix + EnumChatFormatting.AQUA + "Reach" + EnumChatFormatting.WHITE + " (vl:" + attackerCount + ".0)" + EnumChatFormatting.GRAY + ": " + DF_1.format(reach) + " blocks");
         }
@@ -80,7 +81,7 @@ public class GrimAC extends Module {
         if (player.equals(mc.thePlayer) || Teams.isSameTeam(player)) {
             return;
         }
-        String prefix = EnumChatFormatting.GRAY + "[" + EnumChatFormatting.AQUA + "GrimAC" + EnumChatFormatting.GRAY + "] " + EnumChatFormatting.RESET + EnumChatFormatting.GRAY + player.getName() + EnumChatFormatting.WHITE + " failed ";
+        String prefix = EnumChatFormatting.GRAY + "[" + EnumChatFormatting.AQUA + "HackerDetector" + EnumChatFormatting.GRAY + "] " + EnumChatFormatting.RESET + EnumChatFormatting.GRAY + player.getName() + EnumChatFormatting.WHITE + " failed ";
         if (player.isUsingItem() && (player.posX - player.lastTickPosX > 0.2 || player.posZ - player.lastTickPosZ > 0.2)) {
             ChatUtil.log(prefix + EnumChatFormatting.AQUA + "NoSlowA (Prediction)" + EnumChatFormatting.WHITE + " (vl:" + this.vl + ".0)");
             ++this.vl;

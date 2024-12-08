@@ -19,7 +19,7 @@ public class Client {
     private static final Client instance = new Client();
 
     public static final String name = "CatClient";
-    public static final String version = "0.3";
+    public static final String version = "0.4";
 
     private final EventManager eventManager = new EventManager();
     private ElementManager elementManager;
@@ -29,13 +29,13 @@ public class Client {
     private CommandManager commandManager;
 
     public void initClient() {
+        Display.setTitle(String.format("%s - %s",name,version));
+
         this.elementManager = new ElementManager();
         this.moduleManager = new ModuleManager();
         this.valueManager = new ValueManager();
         this.configManager = new ConfigManager();
         this.commandManager = new CommandManager();
-
-        Display.setTitle(String.format("%s - %s",name,version));
     }
 
     public void stopClient() {
