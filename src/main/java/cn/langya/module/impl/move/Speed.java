@@ -35,7 +35,7 @@ public class Speed extends Module {
     
     @EventTarget
     public void onUpdate(EventUpdate event) {
-        if (!MoveUtil.isMoving()) return;
+        if (!MoveUtil.isMoving() || !noLowHop()) return;
 
         switch (modeValue.getValue()) {
             case "WatchdogPredict": {
@@ -44,7 +44,7 @@ public class Speed extends Module {
                         MoveUtil.strafe(MoveUtil.getAllowedHorizontalDistance() - Math.random() / 100f);
                         mc.thePlayer.jump();
                     }
-                } else if (noLowHop() || MoveUtil.getJumpEffect() != 0) {
+                } else if (MoveUtil.getJumpEffect() != 0) {
                     return;
                 }
 
@@ -67,7 +67,7 @@ public class Speed extends Module {
                         MoveUtil.strafe(MoveUtil.getAllowedHorizontalDistance() - Math.random() / 100f);
                         mc.thePlayer.jump();
                     }
-                } else if (MoveUtil.offGroundTicks == 5 && !noLowHop()) {
+                } else if (MoveUtil.offGroundTicks == 5) {
                     mc.thePlayer.motionY = MoveUtil.predictedMotion(mc.thePlayer.motionY, 2);
                 }
             }
