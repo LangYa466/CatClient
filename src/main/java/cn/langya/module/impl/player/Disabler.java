@@ -43,7 +43,6 @@ public class Disabler extends Module {
         if (isFinished || mc.thePlayer.ticksExisted < 20) return;
         canRun = HypixelUtil.isLobby();
         if (!canRun) return;
-        ChatUtil.log("WatchDog Motion is disabling.");
         if (mc.thePlayer.onGround) {
             if (!MoveUtil.jumpDown())
                 mc.thePlayer.jump();

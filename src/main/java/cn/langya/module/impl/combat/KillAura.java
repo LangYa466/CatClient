@@ -41,7 +41,6 @@ public class KillAura extends Module {
     private final ModeValue targetModeValue = new ModeValue("Target Mode", "Single", "Single", "Switch");
     private final NumberValue switchDelayValue = new NumberValue("Switch Delay", 500, 1000, 0, 50);
     private final ModeValue priorityModeValue = new ModeValue("Priority Mode", "Health", "Range", "Health");
-    private final NumberValue fovValue = new NumberValue("Fov", 360f, 10f, 360f, 10f);
 
     private final List<EntityLivingBase> targets = new ArrayList<>();
     public static EntityLivingBase target;
@@ -69,7 +68,7 @@ public class KillAura extends Module {
         }
 
         if (targets.isEmpty()) return;
-        targets.removeIf(target -> target.getHealth() <= 0 || target.getDistanceToEntity(mc.thePlayer) > reach || AntiBots.isHypixelNPC(target) || Teams.isSameTeam(target) || RotationUtil.isVisibleFOV(target, fovValue.getValue()));
+        targets.removeIf(target -> target.getHealth() <= 0 || target.getDistanceToEntity(mc.thePlayer) > reach || AntiBots.isHypixelNPC(target) || Teams.isSameTeam(target));
 
         if (target != null && (target.getHealth() <= 0 || target.getDistanceToEntity(mc.thePlayer) > reach))
             target = null;

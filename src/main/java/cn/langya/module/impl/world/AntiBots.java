@@ -61,6 +61,7 @@ public class AntiBots extends Module {
 	
 	@EventTarget
 	public void onTick(EventTick event) {
+		if (mc.theWorld == null) return;
 		for (EntityPlayer player : mc.theWorld.playerEntities) {
 			final String name = EnumChatFormatting.getTextWithoutFormattingCodes(player.getName());
 
@@ -147,6 +148,7 @@ public class AntiBots extends Module {
 
 	@EventTarget
 	public void onTickon(EventTick event) {
+		if (mc.theWorld == null) return;
 		if (mode.getValue().equals("Invisible")) {
 			for (EntityPlayer player : mc.theWorld.playerEntities) {
 				if (this.InvisTicks.containsKey(player.getEntityId()) && this.InvisTicks.get(player.getEntityId()) > 40

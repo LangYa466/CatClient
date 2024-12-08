@@ -30,7 +30,7 @@ public class Scaffold extends Module {
     private final ModeValue rotationMode = new ModeValue("Rotation Mode", "Watchdog", "Watchdog", "NCP", "Back", "45", "Enum", "Down", "0");
     private final ModeValue placeType = new ModeValue("Place Type", "Post", "Pre", "Post", "Dynamic");
     public static ModeValue keepYMode = new ModeValue("Keep Y Mode", "Always", "Always", "Speed toggled");
-    public static ModeValue sprintMode = new ModeValue("Sprint Mode", "Vanilla", "Vanilla", "Watchdog", "Cancel", "None");
+    public static ModeValue sprintMode = new ModeValue("Sprint Mode", "Vanilla", "Vanilla", "Watchdog", "Cancel");
     public static ModeValue towerMode = new ModeValue("Tower Mode", "Watchdog", "Vanilla", "NCP", "Watchdog", "Verus");
     public static ModeValue swingMode = new ModeValue("Swing Mode", "Client", "Client", "Silent");
     public static NumberValue delay = new NumberValue("Delay", 0, 2, 0, 0.05F);
