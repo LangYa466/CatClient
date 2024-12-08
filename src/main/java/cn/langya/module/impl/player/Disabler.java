@@ -42,7 +42,7 @@ public class Disabler extends Module {
         if (!event.isPre()) return;
         if (isFinished || mc.thePlayer.ticksExisted < 20) return;
         canRun = HypixelUtil.isLobby();
-        if (!canRun) return;
+        if (canRun) return;
         if (mc.thePlayer.onGround) {
             if (!MoveUtil.jumpDown())
                 mc.thePlayer.jump();
@@ -57,7 +57,7 @@ public class Disabler extends Module {
 
     @EventTarget
     public void onReceivePacket(EventPacket event) {
-        if (!canRun) return;
+        if (canRun) return;
         if (event.getPacket() instanceof S08PacketPlayerPosLook && !isFinished) {
             flagged++;
             if (this.flagged == 20) {
