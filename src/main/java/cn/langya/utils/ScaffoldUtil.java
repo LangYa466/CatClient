@@ -1,10 +1,11 @@
 package cn.langya.utils;
 
 import cn.langya.Wrapper;
-import cn.langya.module.impl.world.Scaffold;
+import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -14,6 +15,7 @@ import net.minecraft.util.Vec3;
 
 public class ScaffoldUtil implements Wrapper {
 
+    @Getter
     public static class BlockCache {
 
         private final BlockPos position;
@@ -23,25 +25,18 @@ public class ScaffoldUtil implements Wrapper {
             this.position = position;
             this.facing = facing;
         }
-
-        public BlockPos getPosition() {
-            return this.position;
-        }
-
-        public EnumFacing getFacing() {
-            return this.facing;
-        }
     }
 
     public static double getYLevel() {
-        return mc.thePlayer.posY - 1.0 >= Scaffold.keepYCoord && Math.max(mc.thePlayer.posY, Scaffold.keepYCoord)
-                - Math.min(mc.thePlayer.posY, Scaffold.keepYCoord) <= 3.0 && !mc.gameSettings.keyBindJump.isKeyDown()
-                ? Scaffold.keepYCoord
+        double keepYCoord = Math.floor(mc.thePlayer.posY - 1.0);
+        return mc.thePlayer.posY - 1.0 >= keepYCoord && Math.max(mc.thePlayer.posY, keepYCoord)
+                - Math.min(mc.thePlayer.posY, keepYCoord) <= 3.0 && !mc.gameSettings.keyBindJump.isKeyDown()
+                ? keepYCoord
                 : mc.thePlayer.posY - 1.0;
     }
 
     public static BlockCache getBlockInfo() {
-        final BlockPos belowBlockPos = new BlockPos(mc.thePlayer.posX, getYLevel() - (Scaffold.isDownwards() ? 1 : 0), mc.thePlayer.posZ);
+        final BlockPos belowBlockPos = new BlockPos(mc.thePlayer.posX, getYLevel() - (GameSettings.isKeyDown(mc.gameSettings.keyBindSneak) ? 1 : 0), mc.thePlayer.posZ);
         if (mc.theWorld.getBlockState(belowBlockPos).getBlock() instanceof BlockAir) {
             for (int x = 0; x < 4; x++) {
                 for (int z = 0; z < 4; z++) {
@@ -122,5 +117,4 @@ public class ScaffoldUtil implements Wrapper {
         }
         return new Vec3(x, y, z);
     }
-
 }
