@@ -72,9 +72,9 @@ public class KillAura extends Module {
         }
 
         if (targets.isEmpty()) return;
-        targets.removeIf(target -> target.getHealth() <= 0 || target.getDistanceToEntity(mc.thePlayer) > reach || AntiBots.isHypixelNPC(target) || Teams.isSameTeam(target) || (onlyAttackPlayer.getValue() && !(target instanceof EntityPlayer)));
+        targets.removeIf(target -> target.getHealth() <= 0  || target.isDead|| target.getDistanceToEntity(mc.thePlayer) > reach || AntiBots.isHypixelNPC(target) || Teams.isSameTeam(target) || (onlyAttackPlayer.getValue() && !(target instanceof EntityPlayer)));
 
-        if (target != null && (target.getHealth() <= 0 || target.getDistanceToEntity(mc.thePlayer) > reach)) target = null;
+        if (target != null && (target.getHealth() <= 0 || target.isDead || target.getDistanceToEntity(mc.thePlayer) > reach)) target = null;
 
         // sortTargets
         if (!targets.isEmpty()) {
@@ -127,6 +127,8 @@ public class KillAura extends Module {
     @Override
     public void onDisable() {
         RotationUtil.setRotations();
+        targets.clear();
+        target = null;
         super.onDisable();
     }
 }

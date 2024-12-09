@@ -4,6 +4,9 @@ import cn.langya.event.annotations.EventTarget;
 import cn.langya.event.events.EventMotion;
 import cn.langya.module.Category;
 import cn.langya.module.Module;
+import cn.langya.utils.*;
+import cn.langya.value.impl.BooleanValue;
+import cn.langya.value.impl.NumberValue;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.client.settings.KeyBinding;
@@ -15,6 +18,11 @@ public class Eagle extends Module {
         super(Category.Move);
     }
 
+
+    private final BooleanValue autoPlaceValue = new BooleanValue("AutoPlace",true);
+    private final NumberValue delayValue = new NumberValue("Delay", 0, 2, 0, 0.05F);
+    private final TimerUtil delayTimer = new TimerUtil();
+
     private static Block getBlock(BlockPos pos) {
         return mc.theWorld.getBlockState(pos).getBlock();
     }
@@ -24,12 +32,34 @@ public class Eagle extends Module {
     }
 
     @EventTarget
-    public void onUpdate(EventMotion event) {
-        if (event.isPre()) {
+    public void onUpdate(EventMotion e) {
+        if (e.isPre()) {
             if (getBlockUnderPlayer(mc.thePlayer) instanceof BlockAir) {
                 if (mc.thePlayer.onGround) KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             } else if (mc.thePlayer.onGround) {
                 KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), false);
+            }
+
+            if (!autoPlaceValue.getValue()) return;
+
+            // Setting Block Cache
+            ScaffoldUtil.BlockCache blockCache = ScaffoldUtil.getBlockInfo();
+
+            if (blockCache != null) {
+                float yaw = RotationUtil.getEnumRotations(blockCache.getFacing());
+                e.setRotations(new float[]{yaw, 77});
+            } else {
+                return;
+            }
+
+            if (delayTimer.hasReached(delayValue.getValue().intValue() * 1000)) {
+                if (mc.playerController.onPlayerRightClick(mc.thePlayer, mc.theWorld,
+                        mc.thePlayer.inventory.getStackInSlot(ScaffoldUtil.getBlockSlot()),
+                        blockCache.getPosition(), blockCache.getFacing(),
+                        ScaffoldUtil.getHypixelVec3(blockCache))) {
+                    mc.thePlayer.swingItem();
+                }
+                delayTimer.reset();
             }
         }
     }

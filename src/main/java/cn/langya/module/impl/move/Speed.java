@@ -5,7 +5,6 @@ import cn.langya.event.annotations.EventTarget;
 import cn.langya.event.events.EventUpdate;
 import cn.langya.module.Category;
 import cn.langya.module.Module;
-import cn.langya.module.impl.player.Disabler;
 import cn.langya.utils.MoveUtil;
 import cn.langya.value.impl.BooleanValue;
 import cn.langya.value.impl.ModeValue;
@@ -23,7 +22,6 @@ public class Speed extends Module {
     private final BooleanValue stopOnHurtValue = new BooleanValue("Stop on hurt", true);
 
     public boolean noLowHop() {
-        if (!Disabler.isDisabled()) return true;
         if (Client.getInstance().getModuleManager().getModule("Scaffold").isEnabled()) return true;
         return stopOnHurtValue.getValue() && mc.thePlayer.hurtTime > 0;
     }
