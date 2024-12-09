@@ -18,6 +18,7 @@ import lombok.Setter;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -43,8 +44,7 @@ public class KillAura extends Module {
     private final ModeValue targetModeValue = new ModeValue("Target Mode", "Single", "Single", "Switch");
     private final NumberValue switchDelayValue = new NumberValue("Switch Delay", 500, 1000, 0, 50);
     private final ModeValue priorityModeValue = new ModeValue("Priority Mode", "Health", "Range", "Health");
-    private final BooleanValue noScaffoldRunValue = new BooleanValue("No Scaffold Run",true);
-    private final BooleanValue noGuiRunValue = new BooleanValue("No Gui Run",false);
+    private final BooleanValue onlyAttackPlayer = new BooleanValue("Only Attack Player",true);
 
     private final List<EntityLivingBase> targets = new ArrayList<>();
     public static EntityLivingBase target;
@@ -59,7 +59,6 @@ public class KillAura extends Module {
 
     @EventTarget
     public void onUpdate(EventUpdate event) {
-        if (cantRun()) return;
         float reach = rangeValue.getValue();
 
         // getTargets
@@ -73,7 +72,7 @@ public class KillAura extends Module {
         }
 
         if (targets.isEmpty()) return;
-        targets.removeIf(target -> target.getHealth() <= 0 || target.getDistanceToEntity(mc.thePlayer) > reach || AntiBots.isHypixelNPC(target) || Teams.isSameTeam(target));
+        targets.removeIf(target -> target.getHealth() <= 0 || target.getDistanceToEntity(mc.thePlayer) > reach || AntiBots.isHypixelNPC(target) || Teams.isSameTeam(target) || (onlyAttackPlayer.getValue() && !(target instanceof EntityPlayer)));
 
         if (target != null && (target.getHealth() <= 0 || target.getDistanceToEntity(mc.thePlayer) > reach)) target = null;
 
@@ -113,7 +112,6 @@ public class KillAura extends Module {
 
     @EventTarget
     public void onMotion(EventMotion event) {
-        if (cantRun()) return;
         if (target == null) RotationUtil.setRotations();
         if (event.isPre() && !targets.isEmpty() && target != null) {
             float[] rotations = RotationUtil.getRotationsNeeded(target);
@@ -124,10 +122,6 @@ public class KillAura extends Module {
                 attackTimer.reset();
             }
         }
-    }
-
-    private boolean cantRun() {
-        return (noGuiRunValue.getValue() && mc.currentScreen != null ) || (noScaffoldRunValue.getValue() && Client.getInstance().getModuleManager().getModule("Scaffold").isEnabled());
     }
 
     @Override
