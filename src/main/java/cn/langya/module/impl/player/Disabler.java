@@ -21,7 +21,7 @@ public class Disabler extends Module {
         super(Category.Player);
     }
 
-    private static final ModeValue modeValue = new ModeValue("Mode","Hypixel","Hypixel");
+    private static final ModeValue modeValue = new ModeValue("Mode","Watchdog","Watchdog");
 
     private static boolean isFinished = false;
     private int flagged;
@@ -29,7 +29,7 @@ public class Disabler extends Module {
     private boolean canRun;
 
     public static boolean isDisabled() {
-        return isFinished && modeValue.isMode("Hypixel");
+        return isFinished && modeValue.isMode("Watchdog");
     }
 
     @Override
@@ -64,7 +64,7 @@ public class Disabler extends Module {
                 if (this.flagged == 20) {
                     isFinished = true;
                     flagged = 0;
-                    ChatUtil.log("WatchDog Motion is disabled.");
+                    ChatUtil.log("Watchdog Motion is disabled.");
                     isFinished = true;
                     canRun = false;
                 }

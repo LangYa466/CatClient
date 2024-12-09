@@ -60,6 +60,11 @@ public class InvManager extends Module {
         super(Category.Player);
     }
 
+    @Override
+    public String getSuffix() {
+        return String.valueOf(delay.getValue().intValue());
+    }
+
     @EventTarget
     public void onMotionEvent(EventMotion e) {
         if (e.isPost() || canContinue()) return;

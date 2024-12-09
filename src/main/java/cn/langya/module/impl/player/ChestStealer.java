@@ -50,10 +50,14 @@ public class ChestStealer extends Module {
         super(Category.Player);
     }
 
+    @Override
+    public String getSuffix() {
+        return String.valueOf(delay.getValue().intValue());
+    }
+
     @EventTarget
     public void onMotionEvent(EventMotion e) {
         if (e.isPre()) {
-            setSuffix(smart.getValue() ? "Smart" : "");
             if (aura.getValue()) {
                 final int radius = auraRange.getValue().intValue();
                 for (int x = -radius; x < radius; x++) {

@@ -176,4 +176,13 @@ public class Colors {
         TEAL = new Color(11010027).getRGB();
         GREEN = new Color(65350).getRGB();
     }
+
+    public static Color getBlendColor(double current, double max) {
+        final long base = Math.round(max / 5);
+        if (current >= base * 5) return new Color(15, 255, 15);
+        else if (current >= base * 4) return new Color(165, 255, 0);
+        else if (current >= base * 3) return new Color(255, 190, 0);
+        else if (current >= base * 2) return new Color(255, 90, 0);
+        else return new Color(255, 0, 0);
+    }
 }

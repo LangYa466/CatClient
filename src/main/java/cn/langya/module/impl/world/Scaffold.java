@@ -1,12 +1,10 @@
 package cn.langya.module.impl.world;
 
 import cn.langya.event.annotations.EventTarget;
-import cn.langya.event.events.EventMotion;
-import cn.langya.event.events.EventPacket;
-import cn.langya.event.events.EventSafeWalk;
-import cn.langya.event.events.EventTick;
+import cn.langya.event.events.*;
 import cn.langya.module.Category;
 import cn.langya.module.Module;
+import cn.langya.ui.font.FontManager;
 import cn.langya.utils.*;
 import cn.langya.value.impl.BooleanValue;
 import cn.langya.value.impl.ModeValue;
@@ -14,6 +12,9 @@ import cn.langya.value.impl.NumberValue;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C09PacketHeldItemChange;
 import net.minecraft.network.play.client.C0APacketAnimation;
@@ -25,7 +26,7 @@ import net.minecraft.util.MouseFilter;
 
 public class Scaffold extends Module {
 
-    private final ModeValue countMode = new ModeValue("Block Counter", "Tenacity", "None", "Tenacity", "Basic", "Polar");
+    private final ModeValue countMode = new ModeValue("Block Count", "Simple", "None", "Simple");
     private final BooleanValue rotations = new BooleanValue("Rotations", true);
     private final ModeValue rotationMode = new ModeValue("Rotation Mode", "Watchdog", "Watchdog", "NCP", "Back", "45", "Enum", "Down", "0");
     private final ModeValue placeType = new ModeValue("Place Type", "Post", "Pre", "Post", "Dynamic");
@@ -351,8 +352,30 @@ public class Scaffold extends Module {
         }
     }
 
+    @EventTarget
+    public void onRender2D(EventRender2D event) {
+        int blockCount = getBlockCount();
+        String displayText = blockCount + ((blockCount > 1) ? " blocks" : " block");
+        if (countMode.isMode("Simple")) {
+            FontManager.hanYi().drawCenteredStringWithShadow(displayText,event.getScaledresolution().getScaledWidth() / 2F + FontManager.hanYi().getStringWidth(displayText),event.getScaledresolution().getScaledHeight() / 2F,-1);
+        }
+    }
+
     public static boolean isDownwards() {
         return downwards.getValue() && GameSettings.isKeyDown(mc.gameSettings.keyBindSneak);
     }
 
+    public int getBlockCount() {
+        int n = 0;
+        int i = 36;
+        while (i < 45) {
+            if (mc.thePlayer.inventoryContainer.getSlot(i).getHasStack()) {
+                final ItemStack stack = mc.thePlayer.inventoryContainer.getSlot(i).getStack();
+                final Item item = stack.getItem();
+                if (stack.getItem() instanceof ItemBlock) n += stack.stackSize;
+            }
+            ++i;
+        }
+        return n;
+    }
 }

@@ -8,12 +8,10 @@ import cn.langya.module.Module;
 import cn.langya.ui.Element;
 import cn.langya.ui.font.FontManager;
 import cn.langya.ui.font.impl.UFontRenderer;
-import cn.langya.utils.MoveUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
-import java.text.DecimalFormat;
 
 /**
  * @author LangYa

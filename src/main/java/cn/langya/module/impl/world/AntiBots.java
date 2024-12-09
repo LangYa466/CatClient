@@ -136,6 +136,8 @@ public class AntiBots extends Module {
 	public static boolean isHypixelNPC(Entity entity) {
 		if (!Client.getInstance().getModuleManager().getModule("AntiBots").isEnabled() || !mode.isMode("Hypixel")) return false;
 
+		if (!(entity instanceof EntityPlayer)) return false;
+
 		String formattedName = entity.getDisplayName().getFormattedText();
 		String customName = entity.getCustomNameTag();
 
