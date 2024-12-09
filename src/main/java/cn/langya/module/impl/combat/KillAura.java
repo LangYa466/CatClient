@@ -19,6 +19,10 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemSword;
+import net.minecraft.network.play.client.C07PacketPlayerDigging;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -45,12 +49,14 @@ public class KillAura extends Module {
     private final NumberValue switchDelayValue = new NumberValue("Switch Delay", 500, 1000, 0, 50);
     private final ModeValue priorityModeValue = new ModeValue("Priority Mode", "Health", "Range", "Health");
     private final BooleanValue onlyAttackPlayer = new BooleanValue("Only Attack Player",true);
+    private final BooleanValue autoBlockValue = new BooleanValue("Auto Block",true);
 
     private final List<EntityLivingBase> targets = new ArrayList<>();
     public static EntityLivingBase target;
     private final TimerUtil attackTimer;
     private int switchIndex = 0;
     private final TimerUtil switchTimer;
+    private boolean isBlocking;
 
     @Override
     public String getSuffix() {
@@ -117,9 +123,12 @@ public class KillAura extends Module {
             float[] rotations = RotationUtil.getRotationsNeeded(target);
             RotationUtil.setRotations(rotations);
             if (attackTimer.hasReached(1000 / cpsValue.getValue().intValue())) {
+                if (autoBlockValue.getValue()) unBlock();
                 mc.thePlayer.swingItem();
                 mc.playerController.attackEntity(mc.thePlayer, target);
                 attackTimer.reset();
+            } else {
+                if (autoBlockValue.getValue()) mc.gameSettings.keyBindRight.pressed = true;
             }
         }
     }
@@ -130,5 +139,11 @@ public class KillAura extends Module {
         targets.clear();
         target = null;
         super.onDisable();
+    }
+
+    private void unBlock() {
+        if (!(mc.thePlayer.getHeldItem().getItem() instanceof ItemSword)) return;
+        mc.thePlayer.sendQueue.addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
+        isBlocking = false;
     }
 }
