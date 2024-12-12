@@ -17,7 +17,9 @@ public class BindCommand extends Command {
 
     @Override
     public void run(String[] args) {
-        if (!(args.length == 3)) return;
+        if (args.length != 3) {
+            ChatUtil.log(".bind moduleName keyName");
+        }
 
         boolean nullModule = true;
         for (Module module : Client.getInstance().getModuleManager().getModuleMap().values()) {

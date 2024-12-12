@@ -123,4 +123,15 @@ public class RenderUtil {
         Gui.drawRect(x + width, y1 - width, x1 - width, y1, borderColor);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }
+
+    public static Color reAlpha(Color c, float alpha) {
+        try {
+            float r = 0.003921569f * c.getRed();
+            float g = 0.003921569f * c.getGreen();
+            float b = 0.003921569f * c.getBlue();
+            return new Color(r, g, b, alpha);
+        } catch (Throwable e) {
+            return c;
+        }
+    }
 }

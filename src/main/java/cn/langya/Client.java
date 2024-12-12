@@ -5,6 +5,7 @@ import cn.langya.config.ConfigManager;
 import cn.langya.ui.ElementManager;
 import cn.langya.event.EventManager;
 import cn.langya.module.ModuleManager;
+import cn.langya.ui.custom.CustomUIManager;
 import cn.langya.value.ValueManager;
 import lombok.Getter;
 import org.lwjgl.opengl.Display;
@@ -27,6 +28,7 @@ public class Client {
     private ValueManager valueManager;
     private ConfigManager configManager;
     private CommandManager commandManager;
+    private CustomUIManager customUIManager;
 
     public void initClient() {
         Display.setTitle(String.format("%s - %s",name,version));
@@ -36,6 +38,7 @@ public class Client {
         this.valueManager = new ValueManager();
         this.configManager = new ConfigManager();
         this.commandManager = new CommandManager();
+        this.customUIManager = CustomUIManager.INSTANCE;
     }
 
     public void stopClient() {

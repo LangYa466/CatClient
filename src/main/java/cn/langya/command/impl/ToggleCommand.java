@@ -16,7 +16,9 @@ public class ToggleCommand extends Command {
 
     @Override
     public void run(String[] args) {
-        if (!(args.length == 2)) return;
+        if (args.length != 2) {
+            ChatUtil.log(".t moduleName");
+        }
 
         boolean nullModule = true;
         for (Module module : Client.getInstance().getModuleManager().getModuleMap().values()) {

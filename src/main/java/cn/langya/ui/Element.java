@@ -15,6 +15,7 @@ public class Element implements Wrapper {
     private final String name;
     private float x, y, width, height;
     private boolean isHovering;
+    private boolean isCustomUI;
 
     public void setXY(float x,float y) {
         this.x = x;

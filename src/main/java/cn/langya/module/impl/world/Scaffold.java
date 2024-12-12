@@ -36,7 +36,6 @@ public class Scaffold extends Module {
     @EventTarget
     public void rotation(EventMotion e) {
         // Setting Block Cache
-        blockCache = ScaffoldUtil.getBlockInfo();
 
         if (blockCache != null) {
             float yaw = RotationUtil.getEnumRotations(blockCache.getFacing());
@@ -54,11 +53,17 @@ public class Scaffold extends Module {
                 KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), false);
             }
 
+
+            blockCache = ScaffoldUtil.getBlockInfo();
             if (!autoPlaceValue.getValue() || blockCache == null) return;
 
-            if (delayTimer.hasReached(delayValue.getValue().intValue() * 1000)) {
+            int slot = ScaffoldUtil.getBlockSlot();
+            if (slot == -1) return;
+            mc.thePlayer.inventory.currentItem = slot;
+
+            if (delayTimer.hasReached((int) (delayValue.getValue().longValue() * 1000L))) {
                 if (mc.playerController.onPlayerRightClick(mc.thePlayer, mc.theWorld,
-                        mc.thePlayer.inventory.getStackInSlot(ScaffoldUtil.getBlockSlot()),
+                        mc.thePlayer.inventory.getStackInSlot(slot),
                         blockCache.getPosition(), blockCache.getFacing(),
                         ScaffoldUtil.getHypixelVec3(blockCache))) {
                     mc.thePlayer.swingItem();

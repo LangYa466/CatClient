@@ -327,7 +327,9 @@ public class GuiChat extends GuiScreen
         for (Element element : Client.getInstance().getElementManager().getElementMap().values()) {
             element.setHovering(element.checkHover(mouseX,mouseY));
             if (element.isHovering()) {
-                if (Client.getInstance().getModuleManager().getModuleMap().get(element.getName()).isEnabled()) {
+                boolean canDrag = element.isCustomUI();
+                if (!element.isCustomUI()) canDrag = Client.getInstance().getModuleManager().getModuleMap().get(element.getName()).isEnabled();
+                if (canDrag) {
                     RenderUtil.drawOutline((int) element.getX() - 4, (int) element.getY() - 4, (int) element.getWidth() + 8, (int) element.getHeight() + 8, -1);
                     if (hovering) element.setXY(mouseX - (element.getWidth() / 2), mouseY - (element.getHeight() / 2));
                 }
