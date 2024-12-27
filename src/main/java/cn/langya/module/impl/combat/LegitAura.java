@@ -147,9 +147,9 @@ public class LegitAura extends Module {
 
     @Override
     public void onDisable() {
-        RotationUtil.setRotations();
         targets.clear();
         target = null;
+        RotationUtil.setRotations();
         super.onDisable();
     }
 
