@@ -2,6 +2,7 @@ package cn.langya.event.events;
 
 import cn.langya.Wrapper;
 import cn.langya.event.impl.Event;
+import cn.langya.module.impl.world.ClientRotation;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,11 +36,35 @@ public class EventMotion implements Event, Wrapper {
         return !pre;
     }
 
-    public void setRotations(float[] rotations) {
-        this.setYaw(rotations[0]);
-        this.setPitch(rotations[1]);
-        mc.thePlayer.renderYawOffset = yaw;
-        mc.thePlayer.rotationYawHead = yaw;
+    public void setRotations(float[] targetRotations) {
+        float targetYaw = targetRotations[0];
+        float targetPitch = targetRotations[1];
+
+        // 丝滑程度
+        float smoothFactor = ClientRotation.smoothFactor.getValue();
+
+        // 逐步过渡到目标值
+        float currentYaw = mc.thePlayer.rotationYaw;
+        float currentPitch = mc.thePlayer.rotationPitch;
+
+        float newYaw = smoothTransition(currentYaw, targetYaw, smoothFactor);
+        float newPitch = smoothTransition(currentPitch, targetPitch, smoothFactor);
+
+        if (ClientRotation.isEnabled) {
+            mc.thePlayer.rotationYaw = newYaw;
+            mc.thePlayer.rotationPitch = newPitch;
+        } else {
+            this.setYaw(newYaw);
+            this.setPitch(newPitch);
+        }
+
+        mc.thePlayer.renderYawOffset = newYaw;
+        mc.thePlayer.rotationYawHead = newYaw;
+    }
+
+    // 平滑过渡
+    private float smoothTransition(float current, float target, float factor) {
+        return current + (target - current) * factor;
     }
 }
 

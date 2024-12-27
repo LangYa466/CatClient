@@ -1,6 +1,5 @@
 package cn.langya.module.impl.combat;
 
-import cn.langya.Client;
 import cn.langya.event.annotations.EventTarget;
 import cn.langya.event.events.EventMotion;
 import cn.langya.event.events.EventUpdate;
@@ -20,9 +19,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemSword;
-import net.minecraft.network.play.client.C07PacketPlayerDigging;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MovingObjectPosition;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
@@ -34,9 +31,9 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class KillAura extends Module {
+public class LegitAura extends Module {
 
-    public KillAura() {
+    public LegitAura() {
         super(Category.Combat);
         this.attackTimer = new TimerUtil();
         this.switchTimer = new TimerUtil();
@@ -44,12 +41,15 @@ public class KillAura extends Module {
     }
 
     private final NumberValue cpsValue = new NumberValue("CPS", 6, 20, 1, 1);
-    private final NumberValue rangeValue = new NumberValue("Range", 3, 6, 1, 0.1F);
+    private final NumberValue scanRangeValue = new NumberValue("Scan Range", 3, 6, 1, 0.1F);
+    private final NumberValue attackRangeValue = new NumberValue("Attack Range", 3, 6, 1, 0.1F);
     private final ModeValue targetModeValue = new ModeValue("Target Mode", "Single", "Single", "Switch");
     private final NumberValue switchDelayValue = new NumberValue("Switch Delay", 500, 1000, 0, 50);
-    private final ModeValue priorityModeValue = new ModeValue("Priority Mode", "Health", "Range", "Health");
+    private final ModeValue priorityModeValue = new ModeValue("Priority Mode", "Health", "Range", "Health", "None");
     private final BooleanValue onlyAttackPlayer = new BooleanValue("Only Attack Player",true);
     private final BooleanValue autoBlockValue = new BooleanValue("Auto Block",true);
+    private final ModeValue autoBlockModeValue = new ModeValue("Auto Block Mode","Legit","Legit","Off");
+    private final BooleanValue rayCastValue = new BooleanValue("Ray Cast",true);
 
     private final List<EntityLivingBase> targets = new ArrayList<>();
     public static EntityLivingBase target;
@@ -65,7 +65,7 @@ public class KillAura extends Module {
 
     @EventTarget
     public void onUpdate(EventUpdate event) {
-        float reach = rangeValue.getValue();
+        float reach = scanRangeValue.getValue();
 
         // getTargets
         for (Entity entity : mc.theWorld.loadedEntityList) {
@@ -77,8 +77,12 @@ public class KillAura extends Module {
             targets.add(entityLivingBase);
         }
 
-        if (targets.isEmpty()) return;
-        targets.removeIf(target -> target.getHealth() <= 0  || target.isDead|| target.getDistanceToEntity(mc.thePlayer) > reach || AntiBots.isHypixelNPC(target) || Teams.isSameTeam(target) || (onlyAttackPlayer.getValue() && !(target instanceof EntityPlayer)));
+        if (targets.isEmpty()) {
+            unBlock();
+            return;
+        }
+
+        targets.removeIf(target -> target.getHealth() <= 0  || target.isDead|| target.getDistanceToEntity(mc.thePlayer) > reach || AntiBots.isBot((EntityPlayer) target) || Teams.isSameTeam(target) || (onlyAttackPlayer.getValue() && !(target instanceof EntityPlayer)));
 
         if (target != null && (target.getHealth() <= 0 || target.isDead || target.getDistanceToEntity(mc.thePlayer) > reach)) target = null;
 
@@ -121,14 +125,22 @@ public class KillAura extends Module {
         if (target == null) RotationUtil.setRotations();
         if (event.isPre() && !targets.isEmpty() && target != null) {
             float[] rotations = RotationUtil.getRotationsNeeded(target);
-            RotationUtil.setRotations(rotations);
+            if (rayCastValue.getValue() && mc.objectMouseOver.entityHit != target || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY) {
+                RotationUtil.setRotations(rotations);
+                return;
+            } else if (!rayCastValue.getValue()) {
+                RotationUtil.setRotations(rotations);
+            }
+
             if (attackTimer.hasReached(1000 / cpsValue.getValue().intValue())) {
-                if (autoBlockValue.getValue()) unBlock();
-                mc.thePlayer.swingItem();
-                mc.playerController.attackEntity(mc.thePlayer, target);
-                attackTimer.reset();
+                if (target.getDistanceToEntity(mc.thePlayer) <= attackRangeValue.getValue()) {
+                    if (autoBlockValue.getValue()) unBlock();
+                    mc.thePlayer.swingItem();
+                    mc.playerController.attackEntity(mc.thePlayer, target);
+                    attackTimer.reset();
+                }
             } else {
-                if (autoBlockValue.getValue()) mc.gameSettings.keyBindRight.pressed = true;
+                if (autoBlockValue.getValue()) doBlock();
             }
         }
     }
@@ -141,9 +153,25 @@ public class KillAura extends Module {
         super.onDisable();
     }
 
+    private void doBlock() {
+        if (isBlocking || mc.thePlayer.getHeldItem() == null || !(mc.thePlayer.getHeldItem().getItem() instanceof ItemSword)) return;
+        isBlocking = true;
+        switch (autoBlockModeValue.getValue()) {
+            case "Legit":
+                mc.gameSettings.keyBindUseItem.pressed = true;
+                break;
+            case "Off": break;
+        }
+    }
+
     private void unBlock() {
-        if (!(mc.thePlayer.getHeldItem().getItem() instanceof ItemSword)) return;
-        mc.thePlayer.sendQueue.addToSendQueue(new C07PacketPlayerDigging(C07PacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, EnumFacing.DOWN));
+        if (!isBlocking || !(mc.thePlayer.getHeldItem().getItem() instanceof ItemSword)) return;
+        switch (autoBlockModeValue.getValue()) {
+            case "Legit":
+                mc.gameSettings.keyBindUseItem.pressed = false;
+                break;
+            case "Off": break;
+        }
         isBlocking = false;
     }
 }

@@ -4,7 +4,7 @@ import cn.langya.event.annotations.EventTarget;
 import cn.langya.event.events.EventMotion;
 import cn.langya.module.Category;
 import cn.langya.module.Module;
-import cn.langya.module.impl.combat.KillAura;
+import cn.langya.module.impl.combat.LegitAura;
 import cn.langya.utils.InventoryUtil;
 import cn.langya.value.impl.BooleanValue;
 import net.minecraft.block.Block;
@@ -30,7 +30,7 @@ public class AutoTool extends Module {
                     Block block = mc.theWorld.getBlockState(objectMouseOver.getBlockPos()).getBlock();
                     updateItem(block);
                 }
-            } else if (KillAura.target != null) {
+            } else if (LegitAura.target != null) {
                 switchSword();
             }
         }

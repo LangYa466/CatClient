@@ -1,7 +1,7 @@
 package cn.langya.utils;
 
 import cn.langya.Wrapper;
-import cn.langya.module.impl.combat.KillAura;
+import cn.langya.module.impl.combat.LegitAura;
 import cn.langya.module.impl.world.Teams;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
@@ -91,7 +91,7 @@ public class WorldRenderUtil implements Wrapper {
         if (base != null) {
             int color = Teams.isSameTeam(base) ? -11157267 : getTeamColor(base);
 
-            if (KillAura.target != null && base.getEntityId() == KillAura.target.getEntityId()) {
+            if (LegitAura.target != null && base.getEntityId() == LegitAura.target.getEntityId()) {
                 color = new Color(0xFF00AF).getRGB();
             }
 

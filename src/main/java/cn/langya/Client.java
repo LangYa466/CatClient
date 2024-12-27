@@ -20,7 +20,7 @@ public class Client {
     private static final Client instance = new Client();
 
     public static final String name = "CatClient";
-    public static final String version = "0.6";
+    public static final String version = "0.7";
 
     private final EventManager eventManager = new EventManager();
     private ElementManager elementManager;

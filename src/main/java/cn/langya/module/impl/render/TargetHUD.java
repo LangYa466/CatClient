@@ -5,7 +5,7 @@ import cn.langya.event.annotations.EventTarget;
 import cn.langya.event.events.EventRender2D;
 import cn.langya.module.Category;
 import cn.langya.module.Module;
-import cn.langya.module.impl.combat.KillAura;
+import cn.langya.module.impl.combat.LegitAura;
 import cn.langya.ui.Element;
 import cn.langya.ui.font.FontManager;
 import cn.langya.ui.font.impl.UFontRenderer;
@@ -44,7 +44,7 @@ public class TargetHUD extends Module {
 
     @EventTarget
     public void onRender2D(EventRender2D event) {
-        EntityLivingBase target = KillAura.target;
+        EntityLivingBase target = LegitAura.target;
         if (mc.currentScreen instanceof GuiChat && target == null) target = mc.thePlayer;
         if (target == null) return;
         UFontRenderer fr = FontManager.hanYi();

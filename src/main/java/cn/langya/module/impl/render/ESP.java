@@ -130,6 +130,6 @@ public class ESP extends Module {
             return true;
         }
 
-        return AntiBots.isHypixelNPC(entity);
+        return AntiBots.isBot((EntityPlayer) entity);
     }
 }

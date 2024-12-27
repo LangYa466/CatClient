@@ -5,24 +5,17 @@ import cn.langya.event.events.EventMotion;
 import cn.langya.module.Category;
 import cn.langya.module.Module;
 import cn.langya.utils.*;
-import cn.langya.value.impl.BooleanValue;
-import cn.langya.value.impl.NumberValue;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 
-public class Scaffold extends Module {
-    private ScaffoldUtil.BlockCache blockCache;
-
-    public Scaffold() {
+public class LegitScaffold extends Module {
+    public LegitScaffold() {
         super(Category.Move);
     }
 
-    private final BooleanValue autoPlaceValue = new BooleanValue("AutoPlace",true);
-    private final BooleanValue sprintValue = new BooleanValue("Sprint",false);
-    private final NumberValue delayValue = new NumberValue("Delay", 0, 2, 0, 0.05F);
     private final TimerUtil delayTimer = new TimerUtil();
 
     private static Block getBlock(BlockPos pos) {
@@ -34,42 +27,17 @@ public class Scaffold extends Module {
     }
 
     @EventTarget
-    public void rotation(EventMotion e) {
-        // Setting Block Cache
-
-        if (blockCache != null) {
-            float yaw = RotationUtil.getEnumRotations(blockCache.getFacing());
-            RotationUtil.setRotations(new float[]{yaw, 77});
-        }
-    }
-
-    @EventTarget
     public void onUpdate(EventMotion e) {
         if (e.isPre()) {
-            mc.thePlayer.setSprinting(sprintValue.getValue());
             if (getBlockUnderPlayer(mc.thePlayer) instanceof BlockAir) {
                 if (mc.thePlayer.onGround) KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             } else if (mc.thePlayer.onGround) {
                 KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), false);
             }
 
-
-            blockCache = ScaffoldUtil.getBlockInfo();
-            if (!autoPlaceValue.getValue() || blockCache == null) return;
-
             int slot = ScaffoldUtil.getBlockSlot();
             if (slot == -1) return;
             mc.thePlayer.inventory.currentItem = slot;
-
-            if (delayTimer.hasReached((int) (delayValue.getValue().longValue() * 1000L))) {
-                if (mc.playerController.onPlayerRightClick(mc.thePlayer, mc.theWorld,
-                        mc.thePlayer.inventory.getStackInSlot(slot),
-                        blockCache.getPosition(), blockCache.getFacing(),
-                        ScaffoldUtil.getHypixelVec3(blockCache))) {
-                    mc.thePlayer.swingItem();
-                }
-                delayTimer.reset();
-            }
         }
     }
 
