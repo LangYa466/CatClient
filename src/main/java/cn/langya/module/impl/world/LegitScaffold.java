@@ -16,8 +16,6 @@ public class LegitScaffold extends Module {
         super(Category.Move);
     }
 
-    private final TimerUtil delayTimer = new TimerUtil();
-
     private static Block getBlock(BlockPos pos) {
         return mc.theWorld.getBlockState(pos).getBlock();
     }
