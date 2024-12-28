@@ -3,6 +3,7 @@ package cn.langya.ui.clickgui;
 import cn.langya.Client;
 import cn.langya.module.Category;
 import cn.langya.module.Module;
+import cn.langya.module.impl.render.ClickGUI;
 import cn.langya.ui.clickgui.comp.CheckBox;
 import cn.langya.ui.clickgui.comp.Combo;
 import cn.langya.ui.clickgui.comp.Comp;
@@ -14,6 +15,7 @@ import cn.langya.value.impl.BooleanValue;
 import cn.langya.value.impl.ModeValue;
 import cn.langya.value.impl.NumberValue;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -26,7 +28,7 @@ public class ClickGuiScreen extends GuiScreen {
     public double posX, posY, width, height, dragX, dragY;
     public boolean dragging;
     public Category selectedCategory;
-    public UFontRenderer fr = FontManager.hanYi(17);
+    private final FontRenderer fr = ClickGUI.fr;
 
     public int modeIndex;
 

@@ -1,12 +1,14 @@
 package cn.langya.ui.notification;
 
 import cn.langya.Wrapper;
+import cn.langya.module.impl.render.NotificationsModule;
 import cn.langya.ui.font.FontManager;
 import cn.langya.ui.font.impl.UFontRenderer;
 import cn.langya.utils.RenderUtil;
 import cn.langya.utils.animations.Easing;
 import cn.langya.utils.animations.EasingAnimation;
 import lombok.Getter;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
@@ -23,7 +25,7 @@ public class Notification implements Wrapper {
     private final long begin_time, duration;
     private boolean initialized = false;
     private final float height = 20;
-    private final UFontRenderer font = FontManager.hanYi(18);
+    private final FontRenderer font = NotificationsModule.fr;
 
     public Notification(String content, Easing easingX, Easing easingY, long duration, NotificationType type) {
         this.content = content;

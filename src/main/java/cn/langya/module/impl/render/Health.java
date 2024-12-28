@@ -8,7 +8,9 @@ import cn.langya.event.events.EventRender2D;
 import cn.langya.event.events.EventUpdate;
 import cn.langya.module.Category;
 import cn.langya.module.Module;
+import cn.langya.ui.font.FontManager;
 import cn.langya.utils.Colors;
+import cn.langya.value.impl.BooleanValue;
 import net.minecraft.client.gui.inventory.*;
 import java.awt.*;
 
@@ -21,6 +23,9 @@ public class Health extends Module {
     private final DecimalFormat decimalFormat;
     private final Random random;
     private int width;
+
+    private final BooleanValue cFontValue = new BooleanValue("ClientFont",true);
+    private final FontRenderer fr = cFontValue.getValue() ? FontManager.hanYi(18) : mc.fontRendererObj;
     
     public Health() {
         super(Category.Render);
@@ -63,7 +68,7 @@ public class Health extends Module {
         final int x = new ScaledResolution(mc).getScaledWidth() / 2 - this.width;
         final int y = new ScaledResolution(mc).getScaledHeight() / 2 + 25 + offsetY;
         final Color color = Colors.blendColors(new float[] { 0.0f, 0.5f, 1.0f }, new Color[] { new Color(255, 37, 0), Color.YELLOW, Color.GREEN }, mc.thePlayer.getHealth() / mc.thePlayer.getMaxHealth());
-        mc.fontRendererObj.drawString(string, (absorptionHealth > 0.0f) ? (x - 15.5f) : (x - 3.5f), (float)y, color.getRGB(), true);
+        fr.drawString(string, (absorptionHealth > 0.0f) ? (x - 15.5f) : (x - 3.5f), (float)y, color.getRGB(), true);
         GL11.glPushMatrix();
         mc.getTextureManager().bindTexture(Gui.icons);
         this.random.setSeed(mc.ingameGUI.getUpdateCounter() * 312871L);

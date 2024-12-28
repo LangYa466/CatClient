@@ -12,8 +12,10 @@ import cn.langya.ui.font.impl.UFontRenderer;
 import cn.langya.utils.Colors;
 import cn.langya.utils.MathUtil;
 import cn.langya.utils.RenderUtil;
+import cn.langya.value.impl.BooleanValue;
 import cn.langya.value.impl.ModeValue;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.GlStateManager;
@@ -41,13 +43,14 @@ public class TargetHUD extends Module {
     private final ModeValue uiMode = new ModeValue("UI Mode","Exhibition","Exhibition","Simple");
     private final Element element = Client.getInstance().getElementManager().createElement("TargetHUD");
     private final DecimalFormat decimalFormat = new DecimalFormat("0.0");
+    private final BooleanValue cFontValue = new BooleanValue("ClientFont",true);
+    private final FontRenderer fr = cFontValue.getValue() ? FontManager.hanYi() : mc.fontRendererObj;
 
     @EventTarget
     public void onRender2D(EventRender2D event) {
         EntityLivingBase target = LegitAura.target;
         if (mc.currentScreen instanceof GuiChat && target == null) target = mc.thePlayer;
         if (target == null) return;
-        UFontRenderer fr = FontManager.hanYi();
         String targetName = String.format("Name: %s",target.getName());
         float x = element.getX();
         float y = element.getY();
@@ -56,16 +59,16 @@ public class TargetHUD extends Module {
         float newWidth =  fr.getStringWidth(healthText) + 2;
         if (width < newWidth) width = newWidth;
         int healthRectHeight = 2;
-        float height = 10 + fr.getHeight() + healthRectHeight;
+        float height = 10 + fr.FONT_HEIGHT + healthRectHeight;
         switch (uiMode.getValue()) {
             case "Simple": {
                 Gui.drawRect(x, y, x + width, y + height + healthRectHeight, new Color(0, 0, 0, 80).getRGB());
                 Gui.drawRect(x, y, x + width, y + 2, new Color(0, 140, 255).getRGB());
                 y = y + 2;
                 fr.drawStringWithShadow(targetName, x, y, -1);
-                fr.drawStringWithShadow(healthText, x, y + fr.getHeight() + 1, -1);
+                fr.drawStringWithShadow(healthText, x, y + fr.FONT_HEIGHT + 1, -1);
                 float endWidth = target.getHealth() / target.getMaxHealth() * width;
-                Gui.drawRect(x, y + 10 + fr.getHeight(), x + endWidth, y + 10 + healthRectHeight + fr.getHeight(), new Color(255, 0, 0).getRGB());
+                Gui.drawRect(x, y + 10 + fr.FONT_HEIGHT, x + endWidth, y + 10 + healthRectHeight + fr.FONT_HEIGHT, new Color(255, 0, 0).getRGB());
                 break;
             }
             case "Exhibition": {

@@ -11,6 +11,7 @@ import cn.langya.ui.font.impl.UFontRenderer;
 import cn.langya.utils.RenderUtil;
 import cn.langya.value.impl.BooleanValue;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.MathHelper;
 
@@ -26,13 +27,13 @@ public class WaterMark extends Module {
     }
 
     private final BooleanValue cFontValue = new BooleanValue("ClientFont",true);
+    private final FontRenderer fr = cFontValue.getValue() ? FontManager.hanYi(18) : mc.fontRendererObj;
     private final Element element = Client.getInstance().getElementManager().createElement(getName());
 
     @EventTarget
     public void onRender2D(EventRender2D event) {
         float x = element.getX();
         float y = element.getY();
-        UFontRenderer fr = FontManager.hanYi(18);
         String inputString = String.format("%s | %sFPS | %sYaw | %sPitch", Client.name, Minecraft.getDebugFPS(), Math.round(MathHelper.wrapAngleTo180_float(mc.thePlayer.rotationYaw)), (int) mc.thePlayer.rotationPitch);
         float textWidth = fr.getStringWidth(inputString);
         String firstChar;
@@ -44,7 +45,7 @@ public class WaterMark extends Module {
         String showName = firstChar + "§r§f" + restOfString;
         int color = RenderUtil.skyRainbow(0, 0.5f, 1f).getRGB();
 
-        RenderUtil.drawRect(x - 2,y - 2,textWidth + 4,fr.getHeight() + 6,new Color(0,0,0,80).getRGB());
+        RenderUtil.drawRect(x - 2,y - 2,textWidth + 4,fr.FONT_HEIGHT + 6,new Color(0,0,0,80).getRGB());
         if (cFontValue.getValue()) {
             fr.drawStringWithShadow(showName, x, y, color);
         } else {

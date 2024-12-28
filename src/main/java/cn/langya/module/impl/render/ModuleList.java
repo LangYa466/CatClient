@@ -12,6 +12,7 @@ import cn.langya.utils.RenderUtil;
 import cn.langya.utils.animations.ContinualAnimation;
 import cn.langya.value.impl.BooleanValue;
 import cn.langya.value.impl.NumberValue;
+import net.minecraft.client.gui.FontRenderer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,10 +34,11 @@ public class ModuleList extends Module {
     private final BooleanValue importantModules = new BooleanValue("Important", false);
     private final Element element = Client.getInstance().getElementManager().createElement(getName());
     private final ContinualAnimation animation = new ContinualAnimation();
+    private final BooleanValue cFontValue = new BooleanValue("ClientFont",true);
+    private final FontRenderer fr = cFontValue.getValue() ? FontManager.hanYi(18) : mc.fontRendererObj;
 
     @EventTarget
     public void onRender2D(EventRender2D event) {
-        UFontRenderer fr = FontManager.hanYi(18);
         float width = 0;
         float height = fr.FONT_HEIGHT;
         // 在循环里面获取浪费性能
