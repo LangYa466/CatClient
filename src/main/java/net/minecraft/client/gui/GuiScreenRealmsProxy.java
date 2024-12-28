@@ -100,7 +100,7 @@ public class GuiScreenRealmsProxy extends GuiScreen
 
     public int func_154329_h()
     {
-        return this.fontRendererObj.FONT_HEIGHT;
+        return this.fontRendererObj.getHeight();
     }
 
     public int func_154326_c(String p_154326_1_)

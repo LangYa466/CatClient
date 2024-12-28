@@ -65,8 +65,6 @@ public class UFontRenderer extends FontRenderer implements Wrapper {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        FONT_HEIGHT = stringCache.height / 2;
     }
 
     /**
@@ -127,7 +125,7 @@ public class UFontRenderer extends FontRenderer implements Wrapper {
             String toRender = trimString(text, maxWidth, row == maxRows, false);
             text = text.replace(toRender.replace("...", ""), "");
             drawString(toRender, x, currentY, color);
-            currentY += toRender.isEmpty()? 0 : FONT_HEIGHT + gap;
+            currentY += toRender.isEmpty()? 0 : getHeight() + gap;
             row++;
         }
         return currentY;
@@ -200,5 +198,10 @@ public class UFontRenderer extends FontRenderer implements Wrapper {
 
     public void drawCenteredStringWithShadow(String text, float x, float y, int color) {
         drawCenteredString(text,x,y,color,true);
+    }
+    
+    @Override
+    public int getHeight() {
+        return stringCache.height / 2;
     }
 }

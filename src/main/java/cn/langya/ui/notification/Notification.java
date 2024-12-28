@@ -59,6 +59,6 @@ public class Notification implements Wrapper {
         float x = (float) animationX.getValue(targetX), y = (float) animationY.getValue(targetY);
         RenderUtil.drawRect((int) x, y, width, height, new Color(0, 0, 0, 70).getRGB());
         RenderUtil.drawRect(x, y, (float) (width * animationProcess.getValue(1)), height, color.getRGB());
-        font.drawStringWithShadow(content, (x + 5), (y + (height - font.FONT_HEIGHT) / 2f) - 1, type == null ? 0 : -1);
+        font.drawStringWithShadow(content, (x + 5), (y + (height - font.getHeight()) / 2f) - 1, type == null ? 0 : -1);
     }
 }

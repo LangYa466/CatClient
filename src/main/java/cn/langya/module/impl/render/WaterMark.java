@@ -45,7 +45,7 @@ public class WaterMark extends Module {
         String showName = firstChar + "§r§f" + restOfString;
         int color = RenderUtil.skyRainbow(0, 0.5f, 1f).getRGB();
 
-        RenderUtil.drawRect(x - 2,y - 2,textWidth + 4,fr.FONT_HEIGHT + 6,new Color(0,0,0,80).getRGB());
+        RenderUtil.drawRect(x - 2,y - 2,textWidth + 4,fr.getHeight() + 6,new Color(0,0,0,80).getRGB());
         if (cFontValue.getValue()) {
             fr.drawStringWithShadow(showName, x, y, color);
         } else {

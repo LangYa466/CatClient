@@ -225,7 +225,7 @@ public class GuiTwitchUserMode extends GuiScreen
         for (IChatComponent ichatcomponent : this.field_152332_r)
         {
             this.drawString(this.fontRendererObj, ichatcomponent.getFormattedText(), this.field_152334_t, i, 16777215);
-            i += this.fontRendererObj.FONT_HEIGHT;
+            i += this.fontRendererObj.getHeight();
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks);

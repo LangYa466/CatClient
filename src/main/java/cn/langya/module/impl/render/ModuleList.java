@@ -40,7 +40,7 @@ public class ModuleList extends Module {
     @EventTarget
     public void onRender2D(EventRender2D event) {
         float width = 0;
-        float height = fr.FONT_HEIGHT;
+        float height = fr.getHeight();
         // 在循环里面获取浪费性能
         float posX = element.getX();
         float posY = element.getY();
@@ -61,14 +61,14 @@ public class ModuleList extends Module {
             int color = -1;
             if (rainbowColorValue.getValue()) color = RenderUtil.skyRainbow(index * 50, 0.6f, 1f).getRGB();
             animation.animate(1,25);
-            float moduleY = Math.abs(animation.getOutput() * (posY + (index * (fr.FONT_HEIGHT + spacingValue.getValue().intValue()))));
+            float moduleY = Math.abs(animation.getOutput() * (posY + (index * (fr.getHeight() + spacingValue.getValue().intValue()))));
 
             fr.drawStringWithShadow(moduleText, posX, moduleY, color);
 
             index++;
         }
 
-        height += (fr.FONT_HEIGHT + spacingValue.getValue().intValue()) * (displayModules.size() - 1);
+        height += (fr.getHeight() + spacingValue.getValue().intValue()) * (displayModules.size() - 1);
 
         element.setWH(width, height);
     }

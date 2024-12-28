@@ -28,7 +28,7 @@ public class ClickGuiScreen extends GuiScreen {
     public double posX, posY, width, height, dragX, dragY;
     public boolean dragging;
     public Category selectedCategory;
-    private final FontRenderer fr = ClickGUI.fr;
+    public final FontRenderer fr = ClickGUI.fr;
 
     public int modeIndex;
 
