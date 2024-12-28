@@ -67,81 +67,81 @@ public class LegitAura extends Module {
     public void onUpdate(EventUpdate event) {
         float reach = scanRangeValue.getValue();
 
-        // getTargets
-        for (Entity entity : mc.theWorld.loadedEntityList) {
-            // 防止重复添加
-            if (!(entity instanceof EntityLivingBase) || targets.contains(target)) continue;
-            EntityLivingBase entityLivingBase = (EntityLivingBase) entity;
-            if (entityLivingBase == mc.thePlayer || entityLivingBase.getHealth() <= 0 ||
-                    entityLivingBase.isDead || entityLivingBase.getDistanceToEntity(mc.thePlayer) > reach) continue;
-            targets.add(entityLivingBase);
-        }
+        // 更新目标列表
+        mc.theWorld.loadedEntityList.stream()
+                .filter(entity -> entity instanceof EntityLivingBase)
+                .map(entity -> (EntityLivingBase) entity)
+                .filter(entity -> entity != mc.thePlayer && entity.getHealth() > 0 && !entity.isDead && entity.getDistanceToEntity(mc.thePlayer) <= reach)
+                .filter(entity -> !targets.contains(entity))
+                .forEach(targets::add);
+
+        targets.removeIf(target ->
+                target.getHealth() <= 0 ||
+                        target.isDead ||
+                        target.getDistanceToEntity(mc.thePlayer) > reach ||
+                        AntiBots.isBot((EntityPlayer) target) ||
+                        Teams.isSameTeam(target) ||
+                        (onlyAttackPlayer.getValue() && !(target instanceof EntityPlayer))
+        );
 
         if (targets.isEmpty()) {
             unBlock();
+            target = null;
             return;
         }
 
-        targets.removeIf(target -> target.getHealth() <= 0  || target.isDead|| target.getDistanceToEntity(mc.thePlayer) > reach || AntiBots.isBot((EntityPlayer) target) || Teams.isSameTeam(target) || (onlyAttackPlayer.getValue() && !(target instanceof EntityPlayer)));
-
-        if (target != null && (target.getHealth() <= 0 || target.isDead || target.getDistanceToEntity(mc.thePlayer) > reach)) target = null;
-
-        // sortTargets
-        if (!targets.isEmpty()) {
-            EntityPlayerSP thePlayer = mc.thePlayer;
+        // 选择目标优先级
+        EntityPlayerSP thePlayer = mc.thePlayer;
+        targets.sort((o1, o2) -> {
             switch (priorityModeValue.getValue()) {
                 case "Range":
-                    targets.sort((o1, o2) -> (int) (o1.getDistanceToEntity(thePlayer) - o2.getDistanceToEntity(thePlayer)));
-                    break;
+                    return Float.compare(o1.getDistanceToEntity(thePlayer), o2.getDistanceToEntity(thePlayer));
                 case "Health":
-                    targets.sort((o1, o2) -> (int) (o1.getHealth() - o2.getHealth()));
-                    break;
+                    return Float.compare(o1.getHealth(), o2.getHealth());
+                default:
+                    return 0;
             }
-        }
+        });
 
-        // getTarget
-        if (!targets.isEmpty() && target == null) {
-            switch (targetModeValue.getValue()) {
-                case "Single":
-                    target = targets.get(0);
-                    break;
-                case "Switch":
-                    if (switchTimer.hasReached(switchDelayValue.getValue().intValue())) {
-                        if (switchIndex >= targets.size()) {
-                            switchIndex = 0;
-                            return;
-                        }
-                        target = targets.get(switchIndex);
-                        switchTimer.reset();
-                        switchIndex += 1;
-                    }
-                    break;
+        // 确定目标
+        if (target == null && !targets.isEmpty()) {
+            if ("Single".equals(targetModeValue.getValue())) {
+                target = targets.get(0);
+            } else if ("Switch".equals(targetModeValue.getValue()) && switchTimer.hasReached(switchDelayValue.getValue().intValue())) {
+                target = targets.get(switchIndex % targets.size());
+                switchTimer.reset();
+                switchIndex++;
             }
         }
     }
 
     @EventTarget
     public void onMotion(EventMotion event) {
-        if (target == null) RotationUtil.setRotations();
-        if (event.isPre() && !targets.isEmpty() && target != null) {
+        if (event.isPre() && target != null) {
             float[] rotations = RotationUtil.getRotationsNeeded(target);
-            if (rayCastValue.getValue() && mc.objectMouseOver.entityHit != target || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY) {
-                RotationUtil.setRotations(rotations);
-                return;
-            } else if (!rayCastValue.getValue()) {
+
+            if (rayCastValue.getValue()) {
+                if (mc.objectMouseOver.entityHit != target || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY) {
+                    RotationUtil.setRotations(rotations);
+                    return;
+                }
+            } else {
                 RotationUtil.setRotations(rotations);
             }
 
             if (attackTimer.hasReached(1000 / cpsValue.getValue().intValue())) {
                 if (target.getDistanceToEntity(mc.thePlayer) <= attackRangeValue.getValue()) {
                     if (autoBlockValue.getValue()) unBlock();
+                    if (isBlocking) return;
                     mc.thePlayer.swingItem();
                     mc.playerController.attackEntity(mc.thePlayer, target);
                     attackTimer.reset();
                 }
-            } else {
-                if (autoBlockValue.getValue()) doBlock();
+            } else if (autoBlockValue.getValue()) {
+                doBlock();
             }
+        } else if (target == null) {
+            RotationUtil.setRotations();
         }
     }
 
