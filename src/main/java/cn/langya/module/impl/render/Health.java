@@ -24,7 +24,7 @@ public class Health extends Module {
     private final Random random;
     private int width;
 
-    private final BooleanValue cFontValue = new BooleanValue("ClientFont",true);
+    private final BooleanValue cFontValue = new BooleanValue("ClientFont",false);
     private final FontRenderer fr = cFontValue.getValue() ? FontManager.hanYi(18) : mc.fontRendererObj;
     
     public Health() {

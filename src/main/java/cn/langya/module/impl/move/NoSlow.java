@@ -24,7 +24,8 @@ public class NoSlow extends Module {
         super(Category.Move);
     }
 
-    private final ModeValue modeValue = new ModeValue("Mode","Vanilla","Intave","Vanilla");
+    private final ModeValue modeValue = new ModeValue("Mode","HypixelEat","HypixelEat","Intave","Vanilla");
+    private boolean send;
     private boolean lastUsingItem = false;
 
     @Override
@@ -35,6 +36,23 @@ public class NoSlow extends Module {
     @EventTarget
     public void onPreMotion(EventMotion event) {
         switch (modeValue.getValue()) {
+            case "HypixelEat": {
+                if (!event.isPre()) return;
+
+                final ItemStack item = mc.thePlayer.getHeldItem();
+                if (MoveUtil.offGroundTicks == 4 && send) {
+                    send = false;
+                    PacketUtil.sendPacketNoEvent(new C08PacketPlayerBlockPlacement(
+                            new BlockPos(-1, -1, -1),
+                            255, item,
+                            0, 0, 0
+                    ));
+
+                } else if (item != null && mc.thePlayer.isUsingItem() && !(item.getItem() instanceof ItemSword)) {
+                    event.setY(event.getY() + 1E-14);
+                }
+                break;
+            }
             case "Intave": {
                 if (!mc.thePlayer.isUsingItem() || mc.thePlayer.getHeldItem() == null) {
                     lastUsingItem = false;
@@ -61,7 +79,38 @@ public class NoSlow extends Module {
 
     @Override
     public void onDisable() {
+        send = false;
         lastUsingItem = false;
+    }
+
+    @EventTarget
+    public void onSendPacket(EventPacket event) {
+        switch (modeValue.getValue()) {
+            case "HypixelEat": {
+                if (event.getPacket() instanceof C08PacketPlayerBlockPlacement && !mc.thePlayer.isUsingItem()) {
+                    C08PacketPlayerBlockPlacement blockPlacement = (C08PacketPlayerBlockPlacement) event.getPacket();
+                    ItemStack heldItem = mc.thePlayer.getHeldItem();
+                    if (heldItem != null && blockPlacement.getPlacedBlockDirection() == 255
+                            && (isRest(heldItem.getItem()) || heldItem.getItem() instanceof ItemBow || heldItem.getItem() instanceof ItemPotion) && MoveUtil.offGroundTicks < 2) {
+                        if (mc.thePlayer.onGround && !mc.gameSettings.keyBindJump.isKeyDown()) {
+                            mc.thePlayer.jump();
+                        }
+                        send = true;
+                        event.setCancelled();
+                    }
+                } else if (event.getPacket() instanceof C07PacketPlayerDigging) {
+                    C07PacketPlayerDigging packet = (C07PacketPlayerDigging) event.getPacket();
+                    if (packet.getStatus() == C07PacketPlayerDigging.Action.RELEASE_USE_ITEM) {
+                        if (send) {
+                            // or get bad packet flag
+                            event.setCancelled();
+                        }
+                        send = false;
+                    }
+                }
+                break;
+            }
+        }
     }
 
     public static boolean isRest(Item item) {

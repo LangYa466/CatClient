@@ -1,16 +1,16 @@
 package cn.langya.module.impl.move;
 
-import cn.langya.Client;
 import cn.langya.event.annotations.EventTarget;
 import cn.langya.event.events.EventUpdate;
 import cn.langya.module.Category;
 import cn.langya.module.Module;
+import cn.langya.module.impl.player.HypixelMotionDisabler;
 import cn.langya.utils.MoveUtil;
 import cn.langya.value.impl.BooleanValue;
 import cn.langya.value.impl.ModeValue;
 
 /**
- * @author LangYa
+ * @author LangYa, xia-mc
  * @since 2024/12/6 14:25
  */
 public class Speed extends Module {
@@ -22,7 +22,7 @@ public class Speed extends Module {
     private final BooleanValue stopOnHurtValue = new BooleanValue("Stop on hurt", true);
 
     public boolean noLowHop() {
-        if (Client.getInstance().getModuleManager().getModule("LegitScaffold").isEnabled()) return true;
+        if (!HypixelMotionDisabler.isDisabled()) return true;
         return stopOnHurtValue.getValue() && mc.thePlayer.hurtTime > 0;
     }
 
@@ -65,7 +65,7 @@ public class Speed extends Module {
                         MoveUtil.strafe(MoveUtil.getAllowedHorizontalDistance() - Math.random() / 100f);
                         mc.thePlayer.jump();
                     }
-                } else if (MoveUtil.offGroundTicks == 5) {
+                } else if (MoveUtil.offGroundTicks == 5 && !noLowHop()) {
                     mc.thePlayer.motionY = MoveUtil.predictedMotion(mc.thePlayer.motionY, 2);
                 }
             }

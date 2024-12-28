@@ -62,6 +62,12 @@ public class MoveUtil implements Wrapper {
         setSpeed(moveSpeed, mc.thePlayer.rotationYaw, mc.thePlayer.movementInput.moveStrafe, mc.thePlayer.movementInput.moveForward);
     }
 
+    public static int getSpeedEffect() {
+        if (mc.thePlayer.isPotionActive(Potion.moveSpeed))
+            return mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1;
+        return 0;
+    }
+
     @EventTarget
     public void onUpdate(EventUpdate event) {
         if (mc.thePlayer.onGround) {

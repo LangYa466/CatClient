@@ -5,6 +5,7 @@ import cn.langya.event.events.EventRender3D;
 import cn.langya.module.Category;
 import cn.langya.module.Module;
 import cn.langya.module.impl.world.AntiBots;
+import cn.langya.utils.HypixelUtil;
 import cn.langya.utils.WorldRenderUtil;
 import cn.langya.value.impl.BooleanValue;
 import cn.langya.value.impl.ModeValue;
@@ -22,11 +23,12 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 public class ESP extends Module {
-    public static ModeValue mode = new ModeValue("Mode", "2DBox", "2DBox", "3DBox", "Cylinder");
+    private final ModeValue mode = new ModeValue("Mode", "2DBox", "2DBox", "3DBox", "Cylinder");
 
-    public static BooleanValue invisible = new BooleanValue("Invisible", false);
-    public static BooleanValue player = new BooleanValue("Player", true);
-    public static BooleanValue mob = new BooleanValue("Mob", false);
+    private static final BooleanValue invisible = new BooleanValue("Invisible", false);
+    private static final BooleanValue player = new BooleanValue("Player", true);
+    private static final BooleanValue mob = new BooleanValue("Mob", false);
+    private final BooleanValue noRenderInLobby = new BooleanValue("No Render in Lobby", false);
 
     public ESP() {
         super(Category.Render);
@@ -36,6 +38,7 @@ public class ESP extends Module {
 
     @EventTarget
     private void onRender3D(final EventRender3D event) {
+        if (noRenderInLobby.getValue() && HypixelUtil.isLobby()) return;
         if (mode.isMode("3DBox")) {
             for (EntityLivingBase entity : mc.theWorld.playerEntities) {
                 if (entity == mc.thePlayer) continue;
