@@ -10,6 +10,7 @@ import cn.langya.ui.font.FontManager;
 import cn.langya.ui.font.impl.UFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.util.MathHelper;
 
 import java.awt.*;
 
@@ -26,7 +27,7 @@ public class WaterMark extends Module {
 
     @EventTarget
     public void onRender2D(EventRender2D event) {
-        String displayText = String.format("%s | %sFPS | %sYaw | %sPitch", Client.name, Minecraft.getDebugFPS(), (int) mc.thePlayer.rotationYaw, (int) mc.thePlayer.rotationPitch);
+        String displayText = String.format("%s | %sFPS | %sYaw | %sPitch", Client.name, Minecraft.getDebugFPS(), Math.round(MathHelper.wrapAngleTo180_float(mc.thePlayer.rotationYaw)), (int) mc.thePlayer.rotationPitch);
         UFontRenderer fr = FontManager.hanYi(18);
         float width = fr.getStringWidth(displayText);
         float height = fr.FONT_HEIGHT;

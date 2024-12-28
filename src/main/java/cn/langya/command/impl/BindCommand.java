@@ -23,6 +23,10 @@ public class BindCommand extends Command {
 
         boolean nullModule = true;
         for (Module module : Client.getInstance().getModuleManager().getModuleMap().values()) {
+            if (args.length < 2) {
+                ChatUtil.log(".bind moduleName keyName");
+                return;
+            }
             String moduleName = args[1];
             String bindKeyCodeName = args[2];
             if (module.getName().equalsIgnoreCase(moduleName)) {
