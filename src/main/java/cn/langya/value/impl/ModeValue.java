@@ -29,6 +29,6 @@ public class ModeValue extends Value<String> {
                 return modes[(i + 1) % modes.length];
             }
         }
-        return null;
+        return getDefaultValue();
     }
 }

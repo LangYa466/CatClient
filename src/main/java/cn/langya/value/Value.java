@@ -12,11 +12,13 @@ import lombok.Setter;
 public class Value<T> {
     private String name;
     private T value;
+    private T defaultValue;
     public boolean isHide = false;
 
     public Value(String name, T value) {
         this.name = name;
         this.value = value;
+        this.defaultValue = value;
     }
 
     public void setValue(T value) {
