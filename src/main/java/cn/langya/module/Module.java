@@ -2,7 +2,7 @@ package cn.langya.module;
 
 import cn.langya.Client;
 import cn.langya.Wrapper;
-import cn.langya.utils.ChatUtil;
+import cn.langya.ui.notification.NotificationType;
 import cn.langya.value.Value;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,26 +26,39 @@ public class Module implements Wrapper {
     private List<Value<?>> values;
     private int keyCode = 114514;
 
+    public Module(String name,Category category) {
+        this.name = name;
+        this.category = category;
+        this.values = new ArrayList<>();
+    }
+
     public Module(Category category) {
         this.name = this.getClass().getSimpleName();
         this.category = category;
         this.values = new ArrayList<>();
     }
 
+    public boolean nullCheck() {
+        return mc.thePlayer == null || mc.theWorld == null;
+    }
+
     public void setEnabled(boolean enabled) {
+        setEnabled(enabled,false);
+    }
+
+    public void setEnabled(boolean enabled, boolean silent) {
         // 赋值需要.this
         this.enabled = enabled;
         // 获取值不需要.this
         if (enabled) {
             onEnable();
-            ChatUtil.info(this.name + EnumChatFormatting.GREEN + " Enabled.");
+            if(!nullCheck() && !silent) Client.getInstance().getNotificationManager().post(name + " Enabled", NotificationType.SUCCESS);
         } else {
             onDisable();
-            ChatUtil.info(this.name + EnumChatFormatting.RED + " Disable.");
+            if(!nullCheck() && !silent) Client.getInstance().getNotificationManager().post(name + " Disabled", NotificationType.FAILED);
         }
 
         Client.getInstance().getEventManager().registerModule(enabled,this);
-
 
         if (mc.thePlayer != null) mc.theWorld.playSound(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, "random.click", 0.5F, enabled ? 0.6F : 0.5F, false);
     }
@@ -55,5 +68,9 @@ public class Module implements Wrapper {
 
     public void toggle() {
         setEnabled(!isEnabled());
+    }
+
+    public String getDisplayText() {
+        return  suffix.isEmpty() ? name : String.format("%s %s%s", name, EnumChatFormatting.GRAY, suffix);
     }
 }

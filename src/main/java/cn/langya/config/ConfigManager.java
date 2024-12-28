@@ -37,7 +37,7 @@ public class ConfigManager implements Wrapper {
         InitializerUtil.initialize(clazz -> {
             if (!InitializerUtil.check(Config.class,clazz)) return;
             try {
-                configs.add(((Class<? extends Config>) clazz).newInstance());
+                configs.add((Config) clazz.newInstance());
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }

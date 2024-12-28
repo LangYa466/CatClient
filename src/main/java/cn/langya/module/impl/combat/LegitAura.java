@@ -79,7 +79,7 @@ public class LegitAura extends Module {
                 target.getHealth() <= 0 ||
                         target.isDead ||
                         target.getDistanceToEntity(mc.thePlayer) > reach ||
-                        AntiBots.isBot((EntityPlayer) target) ||
+                        AntiBots.isBot(target) ||
                         Teams.isSameTeam(target) ||
                         (onlyAttackPlayer.getValue() && !(target instanceof EntityPlayer))
         );

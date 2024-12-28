@@ -5,7 +5,7 @@ import cn.langya.config.ConfigManager;
 import cn.langya.ui.ElementManager;
 import cn.langya.event.EventManager;
 import cn.langya.module.ModuleManager;
-import cn.langya.ui.custom.CustomUIManager;
+import cn.langya.ui.notification.NotificationManager;
 import cn.langya.value.ValueManager;
 import lombok.Getter;
 import org.lwjgl.opengl.Display;
@@ -24,21 +24,21 @@ public class Client {
 
     private final EventManager eventManager = new EventManager();
     private ElementManager elementManager;
+    private NotificationManager notificationManager;
     private ModuleManager moduleManager;
     private ValueManager valueManager;
     private ConfigManager configManager;
     private CommandManager commandManager;
-    private CustomUIManager customUIManager;
 
     public void initClient() {
         Display.setTitle(String.format("%s - %s",name,version));
 
         this.elementManager = new ElementManager();
+        this.notificationManager = new NotificationManager();
         this.moduleManager = new ModuleManager();
         this.valueManager = new ValueManager();
         this.configManager = new ConfigManager();
         this.commandManager = new CommandManager();
-        this.customUIManager = CustomUIManager.INSTANCE;
     }
 
     public void stopClient() {

@@ -18,6 +18,7 @@ import cn.langya.module.Category;
 import cn.langya.module.Module;
 import cn.langya.value.impl.ModeValue;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
@@ -51,7 +52,7 @@ public class AntiBots extends Module {
 		bots.clear();
 	}
 
-	public static boolean isBot(EntityPlayer player) {
+	public static boolean isBot(EntityLivingBase player) {
 		if (!Client.getInstance().getModuleManager().getModule("AntiBots").isEnabled()) return false;
 
 		if (modeValue.isMode("Hypixel")) {
@@ -82,11 +83,11 @@ public class AntiBots extends Module {
 		return false;
 	}
 
-	private static boolean nameStartsWith(EntityPlayer player) {
+	private static boolean nameStartsWith(EntityLivingBase player) {
 		return EnumChatFormatting.getTextWithoutFormattingCodes(player.getDisplayName().getUnformattedText()).startsWith("[NPC] ");
 	}
 
-	private static boolean nameEqualsTo(EntityPlayer player) {
+	private static boolean nameEqualsTo(EntityLivingBase player) {
 		return EnumChatFormatting.getTextWithoutFormattingCodes(player.getDisplayName().getUnformattedText()).equals("BOT");
 	}
 }

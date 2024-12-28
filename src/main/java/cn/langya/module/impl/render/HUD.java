@@ -16,7 +16,7 @@ public class HUD extends Module {
     }
 
     public static void renderHUD(ScaledResolution scaledresolution,float partialTicks) {
-        if (!Client.getInstance().getModuleManager().getModule("HUD").isEnabled()) return;
+        if (!Client.getInstance().getModuleManager().isEnabled("HUD")) return;
         EventRender2D eventRender2D = new EventRender2D(scaledresolution, partialTicks);
         Client.getInstance().getEventManager().call(eventRender2D);
     }

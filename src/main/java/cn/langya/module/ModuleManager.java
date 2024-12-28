@@ -59,6 +59,10 @@ public class ModuleManager {
                 .orElse(null);
     }
 
+    public boolean isEnabled(String moduleName) {
+        return getModule(moduleName).isEnabled();
+    }
+
     public List<Module> getModulesWithCategory(Category category) {
         List<Module> modules = new ArrayList<>();
         for (Module module : moduleMap.values()) {
@@ -67,15 +71,15 @@ public class ModuleManager {
         return modules;
     }
 
-    public void addModule(Class<? extends Module> module) throws InstantiationException, IllegalAccessException {
-        this.moduleMap.put(module.getSimpleName(), module.newInstance());
+    public void addModule(Module module) throws InstantiationException, IllegalAccessException {
+        this.moduleMap.put(module.getName(), module);
     }
 
     public void init() {
         InitializerUtil.initialize(clazz -> {
             if (!InitializerUtil.check(Module.class,clazz)) return;
             try {
-                addModule((Class<? extends Module>) clazz);
+                addModule((Module) clazz.newInstance());
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }

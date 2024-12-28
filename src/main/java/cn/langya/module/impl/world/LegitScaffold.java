@@ -4,7 +4,6 @@ import cn.langya.event.annotations.EventTarget;
 import cn.langya.event.events.EventMotion;
 import cn.langya.module.Category;
 import cn.langya.module.Module;
-import cn.langya.utils.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.client.settings.KeyBinding;
@@ -32,10 +31,6 @@ public class LegitScaffold extends Module {
             } else if (mc.thePlayer.onGround) {
                 KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), false);
             }
-
-            int slot = ScaffoldUtil.getBlockSlot();
-            if (slot == -1) return;
-            mc.thePlayer.inventory.currentItem = slot;
         }
     }
 

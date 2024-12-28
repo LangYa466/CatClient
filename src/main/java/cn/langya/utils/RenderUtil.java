@@ -9,11 +9,21 @@ import net.minecraft.util.AxisAlignedBB;
 
 import java.awt.*;
 
+import static net.minecraft.client.gui.Gui.zLevel;
+
 /**
  * @author LangYa
  * @since 2024/11/16 03:59
  */
 public class RenderUtil {
+    public static void drawRect(float x,float y,float width,float height,int color) {
+        Gui.drawRect(x,y,x + width,y + height,color);
+    }
+
+    public static void drawRect(float x, float y, float width, float height, Color color) {
+        drawRect(x,y,width,height,color.getRGB());
+    }
+
     public static void drawOutline(int x, int y, int width, int height, int color) {
         Gui gui = new Gui();
         gui.drawHorizontalLine(x, x + width, y, color);
@@ -133,5 +143,58 @@ public class RenderUtil {
         } catch (Throwable e) {
             return c;
         }
+    }
+
+    /**
+     * Sky rainbow color.
+     *
+     * @param var2   the var 2
+     * @param st     the st
+     * @param bright the bright
+     * @return the color
+     */
+    public static Color skyRainbow(final int var2, final float st, final float bright) {
+        double v1 = Math.ceil(System.currentTimeMillis() + (var2 * 109L)) / 5;
+        return Color.getHSBColor((double) ((float) ((v1 %= 360.0) / 360.0)) < 0.5 ? -((float) (v1 / 360.0)) : (float) (v1 / 360.0), st, bright);
+    }
+
+    /**
+     * Draw gradient rect.
+     *
+     * @param left       the left
+     * @param top        the top
+     * @param right      the right
+     * @param bottom     the bottom
+     * @param startColor the start color
+     * @param endColor   the end color
+     */
+    public static void drawGradientRect(final int left, final int top, final int right, final int bottom, final int startColor, final int endColor) {
+        final float f = (float) (startColor >> 24 & 255) / 255.0F;
+        final float f1 = (float) (startColor >> 16 & 255) / 255.0F;
+        final float f2 = (float) (startColor >> 8 & 255) / 255.0F;
+        final float f3 = (float) (startColor & 255) / 255.0F;
+        final float f4 = (float) (endColor >> 24 & 255) / 255.0F;
+        final float f5 = (float) (endColor >> 16 & 255) / 255.0F;
+        final float f6 = (float) (endColor >> 8 & 255) / 255.0F;
+        final float f7 = (float) (endColor & 255) / 255.0F;
+        GlStateManager.pushMatrix();
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.shadeModel(7425);
+        final Tessellator tessellator = Tessellator.getInstance();
+        final WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        worldrenderer.pos(right, top, zLevel).color(f1, f2, f3, f).endVertex();
+        worldrenderer.pos(left, top, zLevel).color(f1, f2, f3, f).endVertex();
+        worldrenderer.pos(left, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
+        worldrenderer.pos(right, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel(7424);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+        GlStateManager.popMatrix();
     }
 }

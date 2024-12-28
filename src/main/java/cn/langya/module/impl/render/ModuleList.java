@@ -8,10 +8,13 @@ import cn.langya.module.Category;
 import cn.langya.module.Module;
 import cn.langya.ui.font.FontManager;
 import cn.langya.ui.font.impl.UFontRenderer;
+import cn.langya.utils.RenderUtil;
+import cn.langya.utils.animations.ContinualAnimation;
+import cn.langya.value.impl.BooleanValue;
 import cn.langya.value.impl.NumberValue;
-import net.minecraft.util.EnumChatFormatting;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -26,33 +29,45 @@ public class ModuleList extends Module {
     }
 
     private final NumberValue spacingValue = new NumberValue("Spacing",2,5,0,1);
+    private final BooleanValue rainbowColorValue = new BooleanValue("Rainbow Color",true);
+    private final BooleanValue importantModules = new BooleanValue("Important", false);
     private final Element element = Client.getInstance().getElementManager().createElement(getName());
+    private final ContinualAnimation animation = new ContinualAnimation();
 
     @EventTarget
     public void onRender2D(EventRender2D event) {
         UFontRenderer fr = FontManager.hanYi(18);
         float width = 0;
-        float height = ( fr.FONT_HEIGHT + spacingValue.getValue().intValue() ) * Client.getInstance().getModuleManager().getEnableModules().size();
+        float height = fr.FONT_HEIGHT;
         // 在循环里面获取浪费性能
         float posX = element.getX();
         float posY = element.getY();
 
         int index = 0;
-        List<String> displayTexts = new ArrayList<>();
-        for (Module module : Client.getInstance().getModuleManager().getEnableModules()) {
-            String moduleText = module.getSuffix().isEmpty() ? module.getName() : String.format("%s %s%s", module.getName(),EnumChatFormatting.GRAY, module.getSuffix());
-            displayTexts.add(moduleText);
-        }
+        List<Module> displayModules = new ArrayList<>(Client.getInstance().getModuleManager().getEnableModules());
 
-        displayTexts.sort(Comparator.comparingInt(fr::getStringWidth));
+        displayModules.sort(Comparator.comparingInt(module -> fr.getStringWidth(module.getDisplayText())));
+        // 反转list
+        Collections.reverse(displayModules);
 
-        for (String moduleText : displayTexts) {
+        for (Module module : displayModules) {
+            if (importantModules.getValue() && module.getCategory() == Category.Render) continue;
+
+            String moduleText = module.getDisplayText();
             int moduleTextWidth = fr.getStringWidth(moduleText);
             if (width < moduleTextWidth) width = moduleTextWidth;
-            fr.drawStringWithShadow(moduleText,posX,posY + (index * fr.FONT_HEIGHT + spacingValue.getValue().intValue()),-1);
+            int color = -1;
+            if (rainbowColorValue.getValue()) color = RenderUtil.skyRainbow(index * 50, 0.6f, 1f).getRGB();
+            animation.animate(1,25);
+            float moduleY = Math.abs(animation.getOutput() * (posY + (index * (fr.FONT_HEIGHT + spacingValue.getValue().intValue()))));
+
+            fr.drawStringWithShadow(moduleText, posX, moduleY, color);
+
             index++;
         }
 
-        element.setWH(width,height);
+        height += (fr.FONT_HEIGHT + spacingValue.getValue().intValue()) * (displayModules.size() - 1);
+
+        element.setWH(width, height);
     }
 }

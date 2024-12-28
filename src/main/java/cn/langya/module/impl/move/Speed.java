@@ -22,7 +22,7 @@ public class Speed extends Module {
     private final BooleanValue stopOnHurtValue = new BooleanValue("Stop on hurt", true);
 
     public boolean noLowHop() {
-        if (Client.getInstance().getModuleManager().getModule("Scaffold").isEnabled()) return true;
+        if (Client.getInstance().getModuleManager().getModule("LegitScaffold").isEnabled()) return true;
         return stopOnHurtValue.getValue() && mc.thePlayer.hurtTime > 0;
     }
 

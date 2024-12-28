@@ -3,7 +3,6 @@ package cn.langya.event;
 import cn.langya.event.annotations.EventPriority;
 import cn.langya.event.annotations.EventTarget;
 import cn.langya.event.impl.Event;
-import cn.langya.ui.custom.CustomUIManager;
 import cn.langya.utils.MoveUtil;
 import cn.langya.utils.RotationUtil;
 
@@ -25,7 +24,6 @@ public class EventManager {
 
         register(RotationUtil.INSTANCE);
         register(MoveUtil.INSTANCE);
-        register(CustomUIManager.INSTANCE);
     }
 
     public void registerModule(boolean enable,Object obj) {
