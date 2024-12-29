@@ -35,10 +35,14 @@ public class Velocity extends Module {
         super(Category.Combat);
     }
 
+    @Override
+    public String getSuffix() {
+        return mode.getValue();
+    }
+
     @EventTarget
     public void onPacketReceiveEvent(EventPacket e) {
         if (!e.isRev()) return;
-        this.setSuffix(mode.getValue());
         if ((onlyWhileMoving.getValue() && !MoveUtil.isMoving())) return;
         Packet<?> packet = e.getPacket();
         switch (mode.getValue()) {
