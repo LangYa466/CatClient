@@ -20,7 +20,6 @@ import java.util.List;
 public class Module implements Wrapper {
     private final String name;
     private final Category category;
-    private String suffix = "";
     // private final String description;
     private boolean enabled;
     private List<Value<?>> values;
@@ -70,7 +69,11 @@ public class Module implements Wrapper {
         setEnabled(!isEnabled());
     }
 
+    public String getSuffix() {
+        return "";
+    }
+
     public String getDisplayText() {
-        return  suffix.isEmpty() ? name : String.format("%s %s%s", name, EnumChatFormatting.GRAY, suffix);
+        return getSuffix().isEmpty() ? name : String.format("%s %s%s", name, EnumChatFormatting.GRAY, getSuffix());
     }
 }

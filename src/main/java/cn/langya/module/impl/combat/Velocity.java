@@ -15,8 +15,18 @@ import net.minecraft.network.play.server.S27PacketExplosion;
 public class Velocity extends Module {
 
     private final ModeValue mode = new ModeValue("Mode", "Watchdog", "Packet", "Stack", "Watchdog");
-    private final NumberValue horizontal = new NumberValue("Packet-Horizontal", 0, 100, 0, 1);
-    private final NumberValue vertical = new NumberValue("Packet-Vertical", 0, 100, 0, 1);
+    private final NumberValue horizontal = new NumberValue("Horizontal", 0, 100, 0, 1) {
+        @Override
+        public boolean isHide() {
+            return mode.isMode("Packet");
+        }
+    };
+    private final NumberValue vertical = new NumberValue("Vertical", 0, 100, 0, 1) {
+        @Override
+        public boolean isHide() {
+            return mode.isMode("Packet");
+        }
+    };
     private final BooleanValue onlyWhileMoving = new BooleanValue("Only while moving", false);
 
     private boolean cancel;

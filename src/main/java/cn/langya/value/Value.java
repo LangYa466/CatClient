@@ -13,7 +13,6 @@ public class Value<T> {
     private String name;
     private T value;
     private T defaultValue;
-    public boolean isHide = false;
 
     public Value(String name, T value) {
         this.name = name;
@@ -27,4 +26,8 @@ public class Value<T> {
     }
 
     public void onEditValue() { }
+
+    public boolean isHide() {
+        return false;
+    }
 }

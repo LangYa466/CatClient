@@ -10,6 +10,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.util.vector.Vector2f;
+import static java.lang.Math.toRadians;
 
 /**
  * @author LangYa
@@ -68,6 +69,17 @@ public class MoveUtil implements Wrapper {
         return 0;
     }
 
+    public static double predictedMotionY(final double motion, final int ticks) {
+        if (ticks == 0) return motion;
+        double predicted = motion;
+
+        for (int i = 0; i < ticks; i++) {
+            predicted = (predicted - 0.08) * 0.98F;
+        }
+
+        return predicted;
+    }
+
     @EventTarget
     public void onUpdate(EventUpdate event) {
         if (mc.thePlayer.onGround) {
@@ -111,11 +123,70 @@ public class MoveUtil implements Wrapper {
         return Math.toRadians(rotationYaw);
     }
 
+    public static double getDirection() {
+        float rotationYaw;
+
+        rotationYaw = mc.thePlayer.rotationYaw;
+
+        if (mc.thePlayer.movementInput.moveForward < 0F)
+            rotationYaw += 180F;
+
+        float forward = 1F;
+
+        if (mc.thePlayer.movementInput.moveForward < 0F)
+            forward = -0.5F;
+        else if (mc.thePlayer.movementInput.moveForward > 0F)
+            forward = 0.5F;
+
+        if (mc.thePlayer.movementInput.moveStrafe > 0F)
+            rotationYaw -= 90F * forward;
+
+        if (mc.thePlayer.movementInput.moveStrafe < 0F)
+            rotationYaw += 90F * forward;
+
+        return toRadians(rotationYaw);
+    }
+
+    public static float getRawDirectionRotation(float yaw, float pStrafe, float pForward) {
+        float rotationYaw = yaw;
+
+        if (pForward < 0F)
+            rotationYaw += 180F;
+
+        float forward = 1F;
+        if (pForward < 0F)
+            forward = -0.5F;
+        else if (pForward > 0F)
+            forward = 0.5F;
+
+        if (pStrafe > 0F)
+            rotationYaw -= 90F * forward;
+
+        if (pStrafe < 0F)
+            rotationYaw += 90F * forward;
+
+        return rotationYaw;
+    }
+
+
     public static void strafe(final double speed) {
         final double yaw = direction();
         mc.thePlayer.motionX = -MathHelper.sin((float) yaw) * speed;
         mc.thePlayer.motionZ = MathHelper.cos((float) yaw) * speed;
     }
+
+    public static void strafe() {
+        strafe(getSpeed());
+    }
+
+    public static void strafe(final double speed, double yaw) {
+        if (!isMoving())
+            return;
+
+        mc.thePlayer.motionX = -Math.sin(yaw) * speed;
+        mc.thePlayer.motionZ = Math.cos(yaw) * speed;
+    }
+
 
     public static int getJumpEffect() {
         if (mc.thePlayer.isPotionActive(Potion.jump))
@@ -240,6 +311,10 @@ public class MoveUtil implements Wrapper {
     public static float getSpeed() {
         if (mc.thePlayer == null || mc.theWorld == null) return 0;
         return (float) Math.sqrt(mc.thePlayer.motionX * mc.thePlayer.motionX + mc.thePlayer.motionZ * mc.thePlayer.motionZ);
+    }
+
+    public static void stop() {
+        mc.thePlayer.motionX = mc.thePlayer.motionY = mc.thePlayer.motionZ = 0;
     }
 }
 

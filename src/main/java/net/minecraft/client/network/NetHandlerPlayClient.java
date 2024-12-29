@@ -220,7 +220,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient
     private final GuiScreen guiScreenServer;
     private Minecraft gameController;
     private WorldClient clientWorldController;
-    private boolean doneLoadingTerrain;
+    public boolean doneLoadingTerrain;
     private final Map<UUID, NetworkPlayerInfo> playerInfoMap = Maps.<UUID, NetworkPlayerInfo>newHashMap();
     public int currentServerMaxPlayers = 20;
     private boolean field_147308_k = false;

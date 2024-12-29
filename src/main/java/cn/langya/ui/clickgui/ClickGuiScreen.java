@@ -51,6 +51,8 @@ public class ClickGuiScreen extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        comps.removeIf(comp -> comp.setting != null && comp.setting.isHide());
+
         super.drawScreen(mouseX, mouseY, partialTicks);
         if (dragging) {
             posX = mouseX - dragX;
@@ -79,8 +81,6 @@ public class ClickGuiScreen extends GuiScreen {
         }
 
         fr.drawStringWithShadow(Client.name, (float) posX, (float) posY - 9,-1);
-
-        comps.removeIf(comp -> comp.setting != null && comp.setting.isHide);
     }
 
     @Override
@@ -112,31 +112,35 @@ public class ClickGuiScreen extends GuiScreen {
                 if (mouseButton == 0) {
                     m.toggle();
                 }
-                if (mouseButton == 1) {
-                    int sOffset = 3;
-                    comps.clear();
-                    if (m.getValues().isEmpty()) return;
-                    for (Value<?> setting : m.getValues()) {
-                        if (setting.isHide) return;
-                        if (setting instanceof ModeValue) {
-                            comps.add(new Combo(275, sOffset, this, m, (ModeValue) setting));
-                            sOffset += 15;
-                        }
-                        if (setting instanceof BooleanValue) {
-                            comps.add(new CheckBox(275, sOffset, this, m,(BooleanValue) setting));
-                            sOffset += 15;
-                        }
-                        if (setting instanceof NumberValue) {
-                            comps.add(new Slider(275, sOffset, this, m,(NumberValue) setting));
-                            sOffset += 25;
-                        }
-                    }
-                }
+
+                // 不然不显示isHide的 所以每次都获取一下
+                comps.clear();
+                getModuleValues(m);
             }
             offset += 15;
         }
         for (Comp comp : comps) {
             comp.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+    }
+
+    private void getModuleValues(Module m) {
+        int sOffset = 3;
+        if (m.getValues().isEmpty()) return;
+        for (Value<?> setting : m.getValues()) {
+            if (setting.isHide()) return;
+            if (setting instanceof ModeValue) {
+                comps.add(new Combo(275, sOffset, this, m, (ModeValue) setting));
+                sOffset += 15;
+            }
+            if (setting instanceof BooleanValue) {
+                comps.add(new CheckBox(275, sOffset, this, m,(BooleanValue) setting));
+                sOffset += 15;
+            }
+            if (setting instanceof NumberValue) {
+                comps.add(new Slider(275, sOffset, this, m,(NumberValue) setting));
+                sOffset += 25;
+            }
         }
     }
 
