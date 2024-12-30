@@ -40,7 +40,7 @@ public class LongJump extends Module {
     }
 
     public final ModeValue mode = new ModeValue("Mode","Watchdog Fireball", "Old Matrix", "Miniblox", "Watchdog Fireball");
-    public final ModeValue wdFBMode = new ModeValue("Fireball Mode", "Rise", "Chef", "Chef High", "Watchdog Fireball");
+    public final ModeValue wdFBMode = new ModeValue("Fireball Mode", "Rise", "Chef", "Chef High", "Rise");
     private final NumberValue oMatrixTimer = new NumberValue("Matrix Timer", 0.3f, 0.1f, 1, 0.01f) {
         @Override
         public boolean isHide() {

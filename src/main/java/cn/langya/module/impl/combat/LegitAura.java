@@ -23,7 +23,9 @@ import net.minecraft.util.MovingObjectPosition;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author LangYa
@@ -68,21 +70,14 @@ public class LegitAura extends Module {
         float reach = scanRangeValue.getValue();
 
         // 更新目标列表
-        mc.theWorld.loadedEntityList.stream()
+        targets.addAll(mc.theWorld.loadedEntityList.stream()
                 .filter(entity -> entity instanceof EntityLivingBase)
                 .map(entity -> (EntityLivingBase) entity)
-                .filter(entity -> entity != mc.thePlayer && entity.getHealth() > 0 && !entity.isDead && entity.getDistanceToEntity(mc.thePlayer) <= reach)
-                .filter(entity -> !targets.contains(entity))
-                .forEach(targets::add);
-
-        targets.removeIf(target ->
-                target.getHealth() <= 0 ||
-                        target.isDead ||
-                        target.getDistanceToEntity(mc.thePlayer) > reach ||
-                        AntiBots.isBot(target) ||
-                        Teams.isSameTeam(target) ||
-                        (onlyAttackPlayer.getValue() && !(target instanceof EntityPlayer))
-        );
+                .filter(entity -> entity != mc.thePlayer && entity.getHealth() >= 0 && !entity.isDead &&
+                        entity.getDistanceToEntity(mc.thePlayer) <= reach &&
+                        !AntiBots.isBot(entity) && !Teams.isSameTeam(entity) &&
+                        (!onlyAttackPlayer.getValue() || entity instanceof EntityPlayer))
+                .collect(Collectors.toList()));
 
         if (targets.isEmpty()) {
             unBlock();
@@ -92,16 +87,16 @@ public class LegitAura extends Module {
 
         // 选择目标优先级
         EntityPlayerSP thePlayer = mc.thePlayer;
-        targets.sort((o1, o2) -> {
+        targets.sort(Comparator.comparingDouble((EntityLivingBase o) -> {
             switch (priorityModeValue.getValue()) {
                 case "Range":
-                    return Float.compare(o1.getDistanceToEntity(thePlayer), o2.getDistanceToEntity(thePlayer));
+                    return o.getDistanceToEntity(thePlayer);
                 case "Health":
-                    return Float.compare(o1.getHealth(), o2.getHealth());
+                    return o.getHealth();
                 default:
                     return 0;
             }
-        });
+        }));
 
         // 确定目标
         if (target == null && !targets.isEmpty()) {
@@ -117,33 +112,32 @@ public class LegitAura extends Module {
 
     @EventTarget
     public void onMotion(EventMotion event) {
-        if (event.isPre() && target != null) {
-            float[] rotations = RotationUtil.getRotationsNeeded(target);
-
-            if (rayCastValue.getValue()) {
-                if (mc.objectMouseOver.entityHit != target || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY) {
-                    RotationUtil.setRotations(rotations);
-                    return;
-                }
-            } else {
-                RotationUtil.setRotations(rotations);
-            }
-
-            if (attackTimer.hasReached(1000 / cpsValue.getValue().intValue())) {
-                if (target.getDistanceToEntity(mc.thePlayer) <= attackRangeValue.getValue()) {
-                    if (autoBlockValue.getValue()) unBlock();
-                    if (isBlocking) return;
-                    mc.thePlayer.swingItem();
-                    mc.playerController.attackEntity(mc.thePlayer, target);
-                    attackTimer.reset();
-                }
-            } else if (autoBlockValue.getValue()) {
-                doBlock();
-            }
-        } else if (target == null) {
+        if (!event.isPre() || target == null) {
             RotationUtil.setRotations();
+            return;
+        }
+
+        float[] rotations = RotationUtil.getRotationsNeeded(target);
+
+        if (rayCastValue.getValue() && (mc.objectMouseOver.entityHit != target || mc.objectMouseOver.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY)) {
+            RotationUtil.setRotations();
+            return;
+        }
+
+        RotationUtil.setRotations(rotations);
+
+        if (attackTimer.hasReached(1000 / cpsValue.getValue().intValue()) && target.getDistanceToEntity(mc.thePlayer) <= attackRangeValue.getValue()) {
+            if (autoBlockValue.getValue()) unBlock();
+            if (!isBlocking) {
+                mc.thePlayer.swingItem();
+                mc.playerController.attackEntity(mc.thePlayer, target);
+                attackTimer.reset();
+            }
+        } else if (autoBlockValue.getValue()) {
+            doBlock();
         }
     }
+
 
     @Override
     public void onDisable() {

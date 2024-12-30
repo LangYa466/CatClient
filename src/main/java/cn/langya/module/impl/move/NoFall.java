@@ -48,7 +48,7 @@ public class NoFall extends Module {
 
     @Override
     public void onEnable() {
-        if (nullCheck()) this.fallDistance = mc.thePlayer.fallDistance;
+        if (!nullCheck()) this.fallDistance = mc.thePlayer.fallDistance;
     }
 
     @Override

@@ -62,6 +62,7 @@ public class HypixelMotionDisabler extends Module {
                 RotationUtil.setRotations(new float[]{(float) (mc.thePlayer.rotationYaw - (10) + (Math.random() - 0.5) * 3), mc.thePlayer.rotationPitch});
                 event.setX(event.getX() + 0.095+Math.random() / 100);
             }
+            MoveUtil.stop();
         }
     }
 
@@ -81,8 +82,6 @@ public class HypixelMotionDisabler extends Module {
                 flagged = 0;
                 Client.getInstance().getNotificationManager().post("WatchDog Motion is disable.", NotificationType.INFO);
                 isFinished = true;
-            } else {
-                mc.thePlayer.motionY = mc.thePlayer.motionZ = mc.thePlayer.motionX = 0;
             }
         }
     }
